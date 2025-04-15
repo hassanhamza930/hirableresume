@@ -15,7 +15,7 @@ export default function Testimonials() {
       <BlurReveal
         style={{ fontFamily: "Special Gothic Expanded One" }}
         className="mb-2 text-4xl text-center flex flex-wrap gap-x-2 justify-center items-center text-shadow-2xs text-shadow-blue-600"
-        text="What Our Users Say"
+        text="Our Users LOVE us 🫰"
       />
 
       {/* Section Description */}

@@ -48,10 +48,9 @@ export default function BlurRevealLogo({ className, style }: { className?: strin
     >
       <motion.img
         src="/logo.png"
-        className={`h-36 w-36 object-contain object-center ${className || ""}`}
+        className={`h-52 w-52 object-contain object-center rotate-[-12deg] ${className || ""}`}
         style={style}
         variants={logoVariants}
-        whileHover={{ scale: 1.2, rotateZ: 10 }}
       />
     </motion.div>
   );
