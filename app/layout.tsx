@@ -4,6 +4,9 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "HirableResume",
   description: "Personalize your resume for each job description to get your foot in the door.",
+  icons: {
+    icon: "/logo.png",
+  },
 };
 
 export default function RootLayout({
