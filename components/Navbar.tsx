@@ -18,7 +18,7 @@ const NavOption = ({
 
 const Navbar: React.FC = () => {
   return (
-    <nav style={{fontFamily:"Geist Mono"}} className="fixed z-20 top-0 left-1/2 -translate-x-1/2 flex items-center justify-center w-min shadow-xl shadow-white/10 px-10 pb-2 pt-2 gap-x-10 text-sm font-medium text-white bg-white/5 border border-t-0 border-white transition-all duration-300 backdrop-blur-3xl rounded-b-xl">
+    <nav style={{fontFamily:"Geist Mono"}} className="fixed z-20 top-0 left-1/2 -translate-x-1/2 flex items-center justify-center w-min shadow-xl shadow-white/10 px-10 pb-3 pt-2 gap-x-10 text-sm font-medium text-white bg-white/5 border border-t-0 border-white/40 border-dashed transition-all duration-300 backdrop-blur-xl backdrop-brightness-50 rounded-b-xl">
 
 
       <NavOption onClick={() => { }} >Features</NavOption>
