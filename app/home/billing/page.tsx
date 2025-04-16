@@ -11,7 +11,7 @@ import { HiOutlineLightningBolt } from "react-icons/hi";
 import { LoggedInWrapper } from '../../components/LoggedInWrapper';
 import DashboardNavbar from '../components/DashboardNavbar';
 import { useAuth } from '../../hooks/useAuth';
-import { useState, useEffect } from 'react';
+import { useUserStore } from '../../store/userStore';
 
 interface PricingFeature {
   id: number;
@@ -69,7 +69,7 @@ const pricingPlans: PricingPlan[] = [
     borderColor: "from-purple-500 to-pink-500",
     spotlightColor: "rgba(168, 85, 247, 0.15)",
     popular: true,
-    ctaText: "Purchase",
+    ctaText: "Get Started",
     credits: 80,
   },
   {
@@ -82,32 +82,16 @@ const pricingPlans: PricingPlan[] = [
     icon: <MdOutlineAutoAwesome className="h-6 w-6 md:h-8 md:w-8 text-white" />,
     borderColor: "from-blue-500 to-cyan-400",
     spotlightColor: "rgba(59, 130, 246, 0.15)",
-    ctaText: "Purchase",
+    ctaText: "Get Started",
     credits: 20,
   },
 ];
 
 export default function BillingPage() {
-  const { user, getUserData } = useAuth();
-  const [userCredits, setUserCredits] = useState<number | null>(null);
-  
-  // Fetch user credits from Firestore
-  useEffect(() => {
-    const fetchUserCredits = async () => {
-      if (!user) return;
-      
-      try {
-        const userData = await getUserData();
-        if (userData && userData.credits !== undefined) {
-          setUserCredits(userData.credits);
-        }
-      } catch (error) {
-        console.error('Error fetching user credits:', error);
-      }
-    };
-    
-    fetchUserCredits();
-  }, [user, getUserData]);
+  const { userData } = useUserStore();
+
+  // Get user credits from the Zustand store
+  const userCredits = userData?.credits ?? null;
 
   return (
     <LoggedInWrapper>
@@ -122,11 +106,31 @@ export default function BillingPage() {
         />
 
         {/* Current Credits */}
-        <div className="mt-4 mb-8 bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-6 py-2">
+        <motion.div 
+        variants={{
+          hidden: {
+            opacity: 0,
+            filter: "blur(10px)", 
+            transform: "translateY(5%)",
+          },
+          visible: {
+            opacity: 1,
+            filter: "blur(0)", 
+            transform: "translateY(0)",
+          },
+        }}
+        initial="hidden"
+        whileInView="visible"
+        transition={{
+          duration: 0.8,
+          ease: "easeInOut",
+          delay:  0.2
+        }}
+        className="mt-4 mb-8 bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-6 py-2">
           <span style={{ fontFamily: "Geist Mono" }} className="text-white text-sm font-medium">
             Current Credits: <span className="font-bold">{userCredits !== null ? userCredits : '...'}</span>
           </span>
-        </div>
+        </motion.div>
 
         {/* Section Description */}
         <BlurReveal
@@ -143,11 +147,13 @@ export default function BillingPage() {
               variants={{
                 hidden: {
                   opacity: 0,
-                  y: 50,
+                  filter: "blur(10px)", 
+                  transform: "translateY(5%)",
                 },
                 visible: {
                   opacity: 1,
-                  y: 0,
+                  filter: "blur(0)", 
+                  transform: "translateY(0)",
                 },
               }}
               initial="hidden"

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { HiMenu, HiX } from 'react-icons/hi';
 import { FiUser, FiSettings, FiLogOut } from 'react-icons/fi';
 import Link from 'next/link';
@@ -9,6 +9,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import { toast } from 'sonner';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { AnimatePresence, motion } from "motion/react";
+import { useUserStore } from '../../store/userStore';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -32,31 +33,16 @@ const NavOption = ({
 
 const DashboardNavbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [userCredits, setUserCredits] = useState<number | null>(null);
-  const { user, signOut, getUserData } = useAuth();
+  const { user, signOut } = useAuth();
+  const { userData } = useUserStore();
   const router = useRouter();
   const pathname = usePathname();
 
   // Check if we're on a page other than the main home page
   const isNotHomePage = pathname !== '/home';
 
-  // Fetch user credits from Firestore
-  useEffect(() => {
-    const fetchUserCredits = async () => {
-      if (!user) return;
-
-      try {
-        const userData = await getUserData();
-        if (userData && userData.credits !== undefined) {
-          setUserCredits(userData.credits);
-        }
-      } catch (error) {
-        console.error('Error fetching user credits:', error);
-      }
-    };
-
-    fetchUserCredits();
-  }, [user, getUserData]);
+  // Get user credits from the Zustand store
+  const userCredits = userData?.credits ?? null;
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);

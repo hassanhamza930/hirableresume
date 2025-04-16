@@ -13,6 +13,7 @@ import { getApps, initializeApp } from 'firebase/app';
 import { getFirestore, doc, setDoc, getDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { UserData } from '../interfaces';
 import { toast } from 'sonner';
+import { useUserStore } from '../store/userStore';
 
 type AuthError = {
   code: string;
@@ -166,22 +167,52 @@ export function useAuth() {
     return !!localStorage.getItem('uid');
   };
 
-  // Function to get user data from Firestore
+  // Function to get user data from Firestore or Zustand store
   const getUserData = async (): Promise<Partial<UserData> | null> => {
     if (!user) return null;
 
+    // First check if we have data in the Zustand store
+    const { userData, isLoading } = useUserStore.getState();
+
+    // If we have data in the store and it's not loading, return it
+    if (userData && !isLoading) {
+      return userData;
+    }
+
+    // Otherwise, fetch from Firestore (this is a fallback and should rarely be needed)
     try {
       const db = getFirestore();
       const userRef = doc(db, 'users', user.uid);
       const docSnap = await getDoc(userRef);
 
       if (docSnap.exists()) {
-        return docSnap.data() as Partial<UserData>;
+        const data = docSnap.data() as Partial<UserData>;
+        // Update the store with the fetched data
+        useUserStore.getState().setUserData(data);
+        return data;
       }
       return null;
     } catch (error) {
       console.error('Error fetching user data:', error);
       return null;
+    }
+  };
+
+  // Function to update user data in Firestore
+  const updateUserData = async (data: Partial<UserData>): Promise<boolean> => {
+    if (!user) return false;
+
+    try {
+      const db = getFirestore();
+      const userRef = doc(db, 'users', user.uid);
+      await updateDoc(userRef, data);
+
+      // No need to update the store as the onSnapshot listener will do that
+      return true;
+    } catch (error) {
+      console.error('Error updating user data:', error);
+      toast.error('Failed to update user data');
+      return false;
     }
   };
 
@@ -191,6 +222,7 @@ export function useAuth() {
     signInWithGoogle,
     signOut,
     isAuthenticated,
-    getUserData
+    getUserData,
+    updateUserData
   };
 }
