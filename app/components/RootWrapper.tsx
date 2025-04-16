@@ -44,7 +44,7 @@ export const RootWrapper = ({ children }: RootWrapperProps) => {
 return (
     <>
       {children}
-      <Toaster position="top-right" />
+      <Toaster position="top-center" />
     </>
   );
 };

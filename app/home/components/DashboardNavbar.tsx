@@ -1,11 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { HiMenu, HiX } from 'react-icons/hi';
 import { FiUser, FiSettings, FiLogOut } from 'react-icons/fi';
 import Link from 'next/link';
 import { useAuth } from '../../hooks/useAuth';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { toast } from 'sonner';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { AnimatePresence, motion } from "motion/react";
@@ -32,8 +32,31 @@ const NavOption = ({
 
 const DashboardNavbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { user, signOut } = useAuth();
+  const [userCredits, setUserCredits] = useState<number | null>(null);
+  const { user, signOut, getUserData } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
+
+  // Check if we're on a page other than the main home page
+  const isNotHomePage = pathname !== '/home';
+
+  // Fetch user credits from Firestore
+  useEffect(() => {
+    const fetchUserCredits = async () => {
+      if (!user) return;
+
+      try {
+        const userData = await getUserData();
+        if (userData && userData.credits !== undefined) {
+          setUserCredits(userData.credits);
+        }
+      } catch (error) {
+        console.error('Error fetching user credits:', error);
+      }
+    };
+
+    fetchUserCredits();
+  }, [user, getUserData]);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -64,8 +87,16 @@ const DashboardNavbar: React.FC = () => {
       style={{ fontFamily: "Geist Mono" }}
       className="fixed z-20 top-0 left-0 right-0 flex items-center justify-between shadow-sm shadow-white/5 md:shadow-white/10 px-4 sm:px-10 py-2 text-sm font-medium text-white bg-white/5 md:border-b border-white/20 border-dashed transition-all duration-300 backdrop-blur-xl backdrop-brightness-50"
     >
-      {/* Logo and brand name */}
+      {/* Logo and back button */}
       <div className="flex items-center gap-2">
+        {isNotHomePage && (
+          <Link
+            href="/home"
+            className="text-white/70 hover:text-white transition-all duration-300 mr-4"
+          >
+            ← Back to home
+          </Link>
+        )}
       </div>
 
       {/* Mobile menu button */}
@@ -78,9 +109,14 @@ const DashboardNavbar: React.FC = () => {
 
       {/* Desktop navigation */}
       <div className="hidden sm:flex items-center justify-center gap-x-10">
-        <NavOption onClick={() => router.push('/home')}>Dashboard</NavOption>
-        <NavOption onClick={() => toast.info('Coming soon!')}>My Resumes</NavOption>
-        <NavOption onClick={() => toast.info('Coming soon!')}>Templates</NavOption>
+        {/* Credits display - clickable */}
+        <div
+          onClick={() => router.push('/home/billing')}
+          className="flex items-center gap-2 bg-white/10 px-3 py-1 rounded-md hover:bg-white/20 cursor-pointer transition-all duration-200"
+        >
+          <span className="text-white font-medium">Credits:</span>
+          <span className="text-white font-bold">{userCredits !== null ? userCredits : '...'}</span>
+        </div>
 
         {/* User profile dropdown */}
         <DropdownMenu>
@@ -140,9 +176,29 @@ const DashboardNavbar: React.FC = () => {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
             className="fixed z-30 top-full left-0 right-0 flex flex-col justify-center items-start gap-y-4 py-4 px-10 text-black bg-gray-200 shdaow-xl shadow-white backdrop-blur-3xl border border-t-0 border-white/50 rounded-b-xl sm:hidden">
-            <NavOption onClick={() => { setIsMenuOpen(false); router.push('/home'); }}>Dashboard</NavOption>
-            <NavOption onClick={() => { setIsMenuOpen(false); toast.info('Coming soon!'); }}>My Resumes</NavOption>
-            <NavOption onClick={() => { setIsMenuOpen(false); toast.info('Coming soon!'); }}>Templates</NavOption>
+            {/* Back to home option - only shown when not on home page */}
+            {isNotHomePage && (
+              <NavOption
+                onClick={() => {
+                  setIsMenuOpen(false);
+                  router.push('/home');
+                }}
+              >
+                ← Back to home
+              </NavOption>
+            )}
+
+            {/* Credits display in mobile menu - clickable */}
+            <div
+              onClick={() => {
+                setIsMenuOpen(false);
+                router.push('/home/billing');
+              }}
+              className="flex items-center gap-2 bg-white/10 px-3 py-1 rounded-md mb-2 hover:bg-white/20 cursor-pointer transition-all duration-200"
+            >
+              <span className="text-black font-medium">Credits:</span>
+              <span className="text-black font-bold">{userCredits !== null ? userCredits : '...'}</span>
+            </div>
             <NavOption
               className="text-red-400 hover:text-red-300"
               onClick={() => {

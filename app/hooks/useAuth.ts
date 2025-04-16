@@ -95,7 +95,8 @@ export function useAuth() {
           createdAt: serverTimestamp() as unknown as Date,
           lastLogin: serverTimestamp() as unknown as Date,
           resumes: [],
-          plan: 'free'
+          plan: 'free',
+          credits: 5 // Give 5 credits to new users
         };
 
         await setDoc(userRef, userData);
@@ -165,11 +166,31 @@ export function useAuth() {
     return !!localStorage.getItem('uid');
   };
 
+  // Function to get user data from Firestore
+  const getUserData = async (): Promise<Partial<UserData> | null> => {
+    if (!user) return null;
+
+    try {
+      const db = getFirestore();
+      const userRef = doc(db, 'users', user.uid);
+      const docSnap = await getDoc(userRef);
+
+      if (docSnap.exists()) {
+        return docSnap.data() as Partial<UserData>;
+      }
+      return null;
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+      return null;
+    }
+  };
+
   return {
     user,
     loading,
     signInWithGoogle,
     signOut,
-    isAuthenticated
+    isAuthenticated,
+    getUserData
   };
 }
