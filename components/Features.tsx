@@ -33,7 +33,7 @@ const featureSteps: FeatureStep[] = [
     id: 1,
     title: "Upload Your Resume",
     description: "Start by uploading your existing resume or create a new one from scratch just by telling us more about yourself",
-    icon: <FaUpload className="h-8 w-8 text-white" />,
+    icon: <FaUpload className="h-6 w-6 md:h-8 md:w-8 text-white" />,
     borderColor: "from-emerald-500 to-blue-500",
     spotlightColor: "rgba(59, 130, 246, 0.15)",
   },
@@ -41,7 +41,7 @@ const featureSteps: FeatureStep[] = [
     id: 2,
     title: "Paste Job Description",
     description: "Our AI analyzes the job description and customizes your resume to highlight relevant skills and experience",
-    icon: <FaPaste className="h-8 w-8 text-white" />,
+    icon: <FaPaste className="h-6 w-6 md:h-8 md:w-8 text-white" />,
     borderColor: "from-blue-500 to-purple-500",
     spotlightColor: "rgba(168, 85, 247, 0.15)",
   },
@@ -49,7 +49,7 @@ const featureSteps: FeatureStep[] = [
     id: 3,
     title: "Download & Apply",
     description: "Download your personalized resume in multiple formats and apply with confidence.",
-    icon: <FaFileDownload className="h-8 w-8 text-white" />,
+    icon: <FaFileDownload className="h-6 w-6 md:h-8 md:w-8 text-white" />,
     borderColor: "from-purple-500 to-pink-500",
     spotlightColor: "rgba(236, 72, 153, 0.15)",
   },
@@ -60,7 +60,7 @@ const keyFeatures: KeyFeature[] = [
     id: 1,
     title: "ATS Optimization",
     description: "Our AI ensures your resume passes through Applicant Tracking Systems by using the right keywords and formatting.",
-    icon: <MdOutlineAutoAwesome className="h-8 w-8 text-white" />,
+    icon: <MdOutlineAutoAwesome className="h-6 w-6 md:h-8 md:w-8 text-white" />,
     borderColor: "from-blue-500 to-cyan-400",
     spotlightColor: "rgba(59, 130, 246, 0.15)",
   },
@@ -68,7 +68,7 @@ const keyFeatures: KeyFeature[] = [
     id: 2,
     title: "Skill Matching",
     description: "Automatically identify and highlight the skills that match the job description to show recruiters you're the perfect fit.",
-    icon: <MdOutlineCompareArrows className="h-8 w-8 text-white" />,
+    icon: <MdOutlineCompareArrows className="h-6 w-6 md:h-8 md:w-8 text-white" />,
     borderColor: "from-purple-500 to-pink-500",
     spotlightColor: "rgba(168, 85, 247, 0.15)",
   },
@@ -76,7 +76,7 @@ const keyFeatures: KeyFeature[] = [
     id: 3,
     title: "Multiple Formats",
     description: "Download your resume in various formats including PDF, DOCX, and TXT to meet any application requirement.",
-    icon: <MdOutlineFileDownload className="h-8 w-8 text-white" />,
+    icon: <MdOutlineFileDownload className="h-6 w-6 md:h-8 md:w-8 text-white" />,
     borderColor: "from-amber-500 to-orange-500",
     spotlightColor: "rgba(251, 191, 36, 0.15)",
   },
@@ -84,7 +84,7 @@ const keyFeatures: KeyFeature[] = [
     id: 4,
     title: "Version History",
     description: "Keep track of all your customized resumes and easily access previous versions for similar job applications.",
-    icon: <MdOutlineHistory className="h-8 w-8 text-white" />,
+    icon: <MdOutlineHistory className="h-6 w-6 md:h-8 md:w-8 text-white" />,
     borderColor: "from-emerald-500 to-green-500",
     spotlightColor: "rgba(52, 211, 153, 0.15)",
   },
@@ -92,7 +92,7 @@ const keyFeatures: KeyFeature[] = [
 
 export default function Features() {
   return (
-    <div className="w-full flex flex-col justify-start items-center px-[10%] mt-48">
+    <div className="w-full flex flex-col justify-start items-center px-[5%] sm:px-[10%] mt-24 md:mt-48">
       {/* HOW IT WORKS Badge */}
       <motion.div
         initial={{ opacity: 0 }}
@@ -109,14 +109,14 @@ export default function Features() {
       {/* Section Title */}
       <BlurReveal
         style={{ fontFamily: "Special Gothic Expanded One" }}
-        className="mb-2 text-4xl w-[500px] text-center flex flex-wrap gap-x-2 justify-center items-center text-shadow-2xs text-shadow-blue-600"
+        className="mb-2 text-2xl sm:text-3xl md:text-4xl w-full max-w-[500px] px-4 text-center flex flex-wrap gap-x-2 justify-center items-center text-shadow-2xs text-shadow-blue-600"
         text="A Hyper Personalized Resume For Every Job Application"
       />
 
       {/* Section Description */}
       <BlurReveal
         style={{ fontFamily: "Geist Mono" }}
-        className="mb-16 mt-5 text-md font-normal text-center text-white w-[550px]"
+        className="mb-8 md:mb-16 mt-5 text-sm md:text-md font-normal text-center text-white w-full max-w-[550px] px-4"
         text="Maximize your chances of getting noticed in ATS systems & ACTUALLY land job interviews in the next 30 days"
       />
 
@@ -143,7 +143,7 @@ export default function Features() {
               delay: index * 0.2
             }}
             viewport={{ once: true }}
-            className="w-96"
+            className="w-full sm:w-[300px] md:w-96"
           >
             <HowItWorksCard step={step} />
           </motion.div>
@@ -151,7 +151,7 @@ export default function Features() {
       </div>
 
       {/* Key Features Section */}
-      <div className="mt-48 w-full">
+      <div className="mt-24 md:mt-48 w-full">
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -165,13 +165,13 @@ export default function Features() {
 
         <BlurReveal
           style={{ fontFamily: "Special Gothic Expanded One" }}
-          className="mb-5 text-4xl text-center flex flex-wrap gap-x-2 justify-center items-center text-shadow-2xs text-shadow-blue-600"
+          className="mb-5 text-2xl sm:text-3xl md:text-4xl text-center flex flex-wrap gap-x-2 justify-center items-center text-shadow-2xs text-shadow-blue-600 px-4"
           text="AI is Your Unfair Advantage"
         />
 
         <BlurReveal
           style={{ fontFamily: "Geist Mono" }}
-          className="mb-16 text-md font-normal text-center text-white w-[550px] mx-auto"
+          className="mb-8 md:mb-16 text-sm md:text-md font-normal text-center text-white w-full max-w-[550px] mx-auto px-4"
           text="We supercharge your profile with best resume practices and make sure your resume is custom tailored for each specific job applications."
         />
 
@@ -197,7 +197,7 @@ export default function Features() {
                 delay: index * 0.2
               }}
               viewport={{ once: true }}
-              className="w-96" // Adjust width to fit two cards per row with gap
+              className="w-full sm:w-[300px] md:w-96" // Responsive width
             >
               <KeyFeatureCard
                 title={feature.title}
@@ -233,12 +233,12 @@ function HowItWorksCard({ step }: { step: FeatureStep }) {
         </div>
 
         {/* Title */}
-        <h3 style={{ fontFamily: "Geist" }} className="text-white text-xl font-semibold mb-2 text-start">
+        <h3 style={{ fontFamily: "Geist" }} className="text-white text-md md:text-xl font-semibold mb-2 text-start">
           {step.title}
         </h3>
 
         {/* Description */}
-        <p style={{ fontFamily: "Geist Mono" }} className="text-white/70 text-sm text-start">
+        <p style={{ fontFamily: "Geist Mono" }} className="text-white/70 text-xs md:text-sm text-start">
           {step.description}
         </p>
       </div>
@@ -276,12 +276,12 @@ function KeyFeatureCard({
         </div>
 
         {/* Title */}
-        <h3 style={{ fontFamily: "Geist" }} className="text-white text-xl font-semibold mb-2 text-start">
+        <h3 style={{ fontFamily: "Geist" }} className="text-white text-md md:text-xl font-semibold mb-2 text-start">
           {title}
         </h3>
 
         {/* Description */}
-        <p style={{ fontFamily: "Geist Mono" }} className="text-white/70 text-sm text-start">
+        <p style={{ fontFamily: "Geist Mono" }} className="text-white/70 text-xs md:text-sm text-start">
           {description}
         </p>
       </div>

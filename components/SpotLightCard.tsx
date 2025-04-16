@@ -1,13 +1,37 @@
 import { useRef } from "react";
 import "./SpotlightCard.css";
 
-const SpotlightCard = ({ children, className = "", spotlightColor = "rgba(255, 255, 255, 0.25)" }) => {
-  const divRef = useRef(null);
+interface SpotlightCardProps {
+  children: React.ReactNode;
+  className?: string;
+  spotlightColor?: string;
+}
 
-  const handleMouseMove = (e) => {
+const SpotlightCard = ({
+  children,
+  className = "",
+  spotlightColor = "rgba(255, 255, 255, 0.25)"
+}: SpotlightCardProps) => {
+  const divRef = useRef<HTMLDivElement>(null);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!divRef.current) return;
+
     const rect = divRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
+
+    divRef.current.style.setProperty("--mouse-x", `${x}px`);
+    divRef.current.style.setProperty("--mouse-y", `${y}px`);
+    divRef.current.style.setProperty("--spotlight-color", spotlightColor);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (!divRef.current || !e.touches[0]) return;
+
+    const rect = divRef.current.getBoundingClientRect();
+    const x = e.touches[0].clientX - rect.left;
+    const y = e.touches[0].clientY - rect.top;
 
     divRef.current.style.setProperty("--mouse-x", `${x}px`);
     divRef.current.style.setProperty("--mouse-y", `${y}px`);
@@ -18,6 +42,7 @@ const SpotlightCard = ({ children, className = "", spotlightColor = "rgba(255, 2
     <div
       ref={divRef}
       onMouseMove={handleMouseMove}
+      onTouchMove={handleTouchMove}
       className={`card-spotlight ${className}`}
     >
       {children}

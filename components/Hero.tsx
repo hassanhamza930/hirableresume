@@ -8,18 +8,18 @@ import BlurRevealLogo from "./BlurRevealLogo";
 
 export default function Hero() {
     return (
-        <div className="w-full flex flex-col justify-start items-center px-[10%] pt-24">
+        <div className="w-full flex flex-col justify-start items-center px-[5%] sm:px-[10%] pt-16 md:pt-24">
 
             <BlurRevealLogo />
 
             <BlurReveal
                 style={{ fontFamily: "Special Gothic Expanded One" }}
-                className="mt-5 w-[550px] text-5xl text-center flex flex-wrap gap-x-2 justify-center items-center text-shadow-2xs text-shadow-blue-600" text="Hack the job market in 2025 with AI" />
+                className="mt-5 w-full max-w-[550px] px-4 text-3xl md:text-5xl text-center flex flex-wrap gap-x-2 justify-center items-center text-shadow-2xs text-shadow-blue-600" text="Hack the job market in 2025 with AI" />
 
 
             <BlurReveal
                 style={{ fontFamily: "Geist Mono" }}
-                className="mt-5 text-md font-normal text-center text-white w-[450px]" text="Make hyper-personalized resumes for each job description to beat ATS systems and get your foot in the door." />
+                className="mt-5 text-sm md:text-md font-normal text-center text-white w-full max-w-[450px] px-4" text="Make hyper-personalized resumes for each job description to beat ATS systems and get your foot in the door." />
 
 
             <motion.div
@@ -65,7 +65,7 @@ export default function Hero() {
                 initial="hidden"
                 whileInView={"visible"}
                 transition={{ duration: 2, ease: "easeInOut" }}
-                className="h-[750px] w-[750px] mt-24 rounded-xl overflow-hidden">
+                className="h-[300px] sm:h-[450px] md:h-[600px] lg:h-[750px] w-[90%] sm:w-[80%] md:w-[90%] lg:w-[750px] mt-12 md:mt-24 rounded-xl overflow-hidden">
                 <video src="/hero.mp4" autoPlay loop muted className="h-full w-full object-cover"></video>
             </motion.div>
 

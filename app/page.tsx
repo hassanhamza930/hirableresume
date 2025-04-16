@@ -5,7 +5,7 @@ import Features from "@/components/Features";
 
 export default function Home() {
   return (
-    <div className="min-h-screen w-full flex flex-col justify-start items-center">
+    <div className="min-h-screen w-full flex flex-col justify-start items-center overflow-x-hidden">
       <Navbar />
       <Hero/>
       <Features />
