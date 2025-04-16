@@ -32,21 +32,21 @@ interface PricingPlan {
 
 const pricingFeatures = {
   basic: [
-    { id: 1, title: "10 Resume Customizations", included: true },
+    { id: 1, title: "20 Ultra Personalized Resumes", included: true },
     { id: 2, title: "Basic ATS Optimization", included: true },
     { id: 3, title: "PDF Export Format", included: true },
-    { id: 4, title: "Email Support", included: true },
+    { id: 4, title: "AI Cover Letters", included: false },
     { id: 5, title: "Advanced Skill Matching", included: false },
     { id: 6, title: "Multiple Export Formats", included: false },
     { id: 7, title: "Version History", included: false },
     { id: 8, title: "Priority Support", included: false },
   ],
   pro: [
-    { id: 1, title: "50 Resume Customizations", included: true },
+    { id: 1, title: "80 Ultra Personalized Resumes", included: true },
     { id: 2, title: "Advanced ATS Optimization", included: true },
     { id: 3, title: "Multiple Export Formats", included: true },
-    { id: 4, title: "Email Support", included: true },
     { id: 5, title: "Advanced Skill Matching", included: true },
+    { id: 4, title: "AI Cover Letters", included: true },
     { id: 6, title: "Version History", included: true },
     { id: 7, title: "Priority Support", included: false },
     { id: 8, title: "Custom Branding", included: false },
@@ -100,7 +100,7 @@ export default function Pricing() {
       {/* Section Title */}
       <BlurReveal
         style={{ fontFamily: "Special Gothic Expanded One" }}
-        className="mb-2 text-2xl sm:text-3xl md:text-4xl text-center flex flex-wrap gap-x-2 justify-center items-center text-shadow-2xs text-shadow-blue-600 px-4 w-[650px]"
+        className="mb-2 text-2xl sm:text-3xl md:text-4xl text-center flex flex-wrap gap-x-2 justify-center items-center text-shadow-2xs text-shadow-blue-600 px-4 w-full md:w-[650px]"
         text="Spend $20 with us, Land your first Job Interview in the next 30 Days."
       />
 

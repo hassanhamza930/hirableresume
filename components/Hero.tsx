@@ -27,8 +27,8 @@ export default function Hero() {
                 animate={{ opacity: 1 }}
                 transition={{ duration: 1, delay: 2 }}
                 className="mt-10 relative flex justify-center items-center">
-                <Button className=" text-lg font-semibold px-10 py-5">
-                    Get 3 Resumes for Free
+                <Button className="text-md md:text-lg font-semibold px-10 py-3 md:py-5">
+                    Get a Free Resume
                 </Button>
 
                 <motion.div
@@ -65,9 +65,14 @@ export default function Hero() {
                 initial="hidden"
                 whileInView={"visible"}
                 transition={{ duration: 2, ease: "easeInOut" }}
-                className="h-[300px] sm:h-[450px] md:h-[600px] lg:h-[750px] w-[90%] sm:w-[80%] md:w-[90%] lg:w-[750px] mt-12 md:mt-24 rounded-xl overflow-hidden">
-                <video src="/hero.mp4" autoPlay loop muted className="h-full w-full object-cover"></video>
+                className="w-full flex justify-center items-center overflow-hidden"
+            >
+                <div className=" mt-12 md:mt-24 w-[80%] md:w-auto md:h-96 rounded-xl overflow-hidden flex flex-col md:flex-row justify-center items-center bg-black">
+                    <video src="/hero.mp4" autoPlay loop muted className="h-full w-full object-cover rounded-none"></video>
+                    <video src="/hero2.mp4" autoPlay loop muted className="h-full w-full object-cover rounded-xl"></video>
+                </div>
             </motion.div>
+
 
         </div >
     )
