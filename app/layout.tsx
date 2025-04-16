@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { RootWrapper } from './components/RootWrapper';
 
 export const metadata: Metadata = {
   title: "HirableResume",
@@ -25,7 +26,9 @@ export default function RootLayout({
       <body
         className={`antialiased bg-zinc-950`}
       >
-        {children}
+        <RootWrapper>
+          {children}
+        </RootWrapper>
       </body>
     </html>
   );

@@ -5,6 +5,7 @@ import { Button } from "./ui/button";
 import { FaHandPointer } from "react-icons/fa6";
 import BlurReveal from "./BlurText";
 import BlurRevealLogo from "./BlurRevealLogo";
+import Link from "next/link";
 
 export default function Hero() {
     return (
@@ -28,8 +29,8 @@ export default function Hero() {
                 animate={{ opacity: 1 }}
                 transition={{ duration: 1, delay: 2 }}
                 className="mt-10 relative flex justify-center items-center">
-                <Button className="text-md md:text-lg font-semibold px-10 py-3 md:py-5">
-                    Get a Free Resume
+                <Button className="text-md md:text-lg font-semibold px-10 py-3 md:py-5" asChild>
+                    <Link href="/signin">Get a Free Resume</Link>
                 </Button>
 
                 <motion.div
