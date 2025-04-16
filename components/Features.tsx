@@ -223,7 +223,7 @@ function HowItWorksCard({ step }: { step: FeatureStep }) {
     >
       <div className="flex flex-col justify-start items-start h-full">
         {/* Icon Container */}
-        <div className="mb-5 flex items-center justify-center">
+        <div className="mb-5 h-8 w-8 flex items-center justify-center">
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             whileInView={{ opacity: 1, scale: 1 }}
@@ -234,7 +234,7 @@ function HowItWorksCard({ step }: { step: FeatureStep }) {
         </div>
 
         {/* Title */}
-        <h3 style={{ fontFamily: "Geist" }} className="text-white text-md md:text-xl font-semibold mb-2 text-start">
+        <h3 style={{ fontFamily: "Geist" }} className="text-white text-md md:text-lg font-semibold mb-2 text-start">
           {step.title}
         </h3>
 
@@ -277,7 +277,7 @@ function KeyFeatureCard({
         </div>
 
         {/* Title */}
-        <h3 style={{ fontFamily: "Geist" }} className="text-white text-md md:text-xl font-semibold mb-2 text-start">
+        <h3 style={{ fontFamily: "Geist" }} className="text-white text-md md:text-lg font-semibold mb-2 text-start">
           {title}
         </h3>
 
