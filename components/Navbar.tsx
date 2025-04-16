@@ -23,7 +23,7 @@ const Navbar: React.FC = () => {
   };
 
   return (
-    <nav style={{fontFamily:"Geist Mono"}} className="fixed z-20 top-0 left-1/2 -translate-x-1/2 flex items-center justify-end md:justify-between shadow-md md:shadow-xl shadow-white/5 md:shadow-white/10 px-4 sm:px-10 pb-0 md:pb-3 pt-0 md:pt-2 text-sm font-medium text-white bg-white/5 md:border border-t-0 border-white/40 border-dashed transition-all duration-300 backdrop-blur-xl backdrop-brightness-50 rounded-none md:rounded-b-xl md:w-auto w-full">
+    <nav style={{fontFamily:"Geist Mono"}} className="fixed z-20 top-0 left-1/2 -translate-x-1/2 flex items-center justify-end md:justify-between shadow-md md:shadow-xl shadow-white/5 md:shadow-white/10 px-4 sm:px-10 pb-0 md:pb-3 pt-0 md:pt-2 text-sm font-medium text-white bg-white/5 md:border md:border-t-0 border-white/40 border-dashed transition-all duration-300 backdrop-blur-xl backdrop-brightness-50 rounded-none md:rounded-b-xl md:w-auto w-full">
 
       {/* Mobile menu button */}
       <button
