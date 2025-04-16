@@ -8,7 +8,8 @@ import BlurRevealLogo from "./BlurRevealLogo";
 
 export default function Hero() {
     return (
-        <div className="w-full flex flex-col justify-start items-center px-[5%] sm:px-[10%] pt-16 md:pt-24">
+        <div 
+        className="w-full flex flex-col justify-start items-center px-[5%] sm:px-[10%] pt-16 md:pt-24">
 
             <BlurRevealLogo />
 

@@ -86,6 +86,7 @@ export default function Pricing() {
   return (
     <div className="w-full flex flex-col justify-start items-center px-[5%] sm:px-[10%] mt-24 md:mt-48">
       {/* Section Label */}
+      
       <motion.div
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
@@ -161,6 +162,7 @@ function PricingCard({ plan }: { plan: PricingPlan }) {
       className={`relative overflow-visible h-full border ${plan.popular ? 'border-purple-500/50' : 'border-white/10'} bg-zinc-950/50 backdrop-blur-xl p-5 relative z-10`}
       spotlightColor={plan.spotlightColor || "rgba(255, 255, 255, 0.1)"}
     >
+
       {plan.popular && (
         <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-white/80 via-white to-white/80 text-black text-xs py-1 px-3 rounded-full z-20">
           <span style={{ fontFamily: "Geist" }}>Most Popular</span>

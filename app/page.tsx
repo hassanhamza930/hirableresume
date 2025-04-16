@@ -7,7 +7,7 @@ import FAQs from "@/components/FAQs";
 
 export default function Home() {
   return (
-    <div className="relative z-0 w-full flex flex-col justify-start items-center overflow-x-hidden">
+    <div className="relative z-0 w-full flex flex-col justify-start items-center overflow-x-hidden pb-36">
       <Navbar />
       <Hero/>
       <Features />
