@@ -8,8 +8,8 @@ import BlurRevealLogo from "./BlurRevealLogo";
 
 export default function Hero() {
     return (
-        <div 
-        className="w-full flex flex-col justify-start items-center px-[5%] sm:px-[10%] pt-16 md:pt-24">
+        <div
+            className="w-full flex flex-col justify-start items-center px-[5%] md:px-[10%] pt-24 md:pt-32">
 
             <BlurRevealLogo />
 
@@ -66,9 +66,13 @@ export default function Hero() {
                 initial="hidden"
                 whileInView={"visible"}
                 transition={{ duration: 2, ease: "easeInOut" }}
-                className="w-full flex justify-center items-center overflow-hidden"
+                className="w-auto relative flex justify-center items-center overflow-hidden mt-24 p-0 md:p-16 rounded-2xl"
             >
-                <div className=" mt-12 md:mt-24 w-[80%] md:w-auto md:h-96 rounded-xl overflow-hidden flex flex-col md:flex-row justify-center items-center bg-black">
+
+                <img src="chrome.gif" className="w-full h-full absolute z-0 object-cover object-center" />
+                <div className="w-full h-full absolute z-10 object-cover object-center bg-zinc-800/50 backdrop-blur-2xl backdrop-brightness-[1.0] backdrop-contrast-[3.0] backdrop-saturate-200" />
+
+                <div className="relative z-10  w-full md:w-auto md:h-96 rounded-xl overflow-hidden flex flex-col md:flex-row justify-center items-center bg-black">
                     <video src="/hero.mp4" autoPlay loop muted className="h-full w-full object-cover rounded-none"></video>
                     <video src="/hero2.mp4" autoPlay loop muted className="h-full w-full object-cover rounded-xl"></video>
                 </div>

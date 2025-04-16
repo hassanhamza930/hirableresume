@@ -151,7 +151,8 @@ export default function Features() {
       </div>
 
       {/* Key Features Section */}
-      <div className="mt-24 md:mt-48 w-full">
+      <div className="mt-24 md:mt-48 w-full relative">
+
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
