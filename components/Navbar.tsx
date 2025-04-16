@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { HiMenu, HiX } from "react-icons/hi";
+import Link from "next/link";
 
 const NavOption = ({
   children,
@@ -38,7 +39,7 @@ const Navbar: React.FC = () => {
         <NavOption onClick={() => { }} >Features</NavOption>
         <NavOption onClick={() => { }} >Pricing</NavOption>
         <NavOption onClick={() => { }} >Affiliate</NavOption>
-        <NavOption onClick={() => { }} >Login</NavOption>
+        <Link href="/signin"><NavOption>Login</NavOption></Link>
       </div>
 
       {/* Mobile navigation */}
@@ -47,7 +48,7 @@ const Navbar: React.FC = () => {
           <NavOption onClick={() => { setIsMenuOpen(false); }} >Features</NavOption>
           <NavOption onClick={() => { setIsMenuOpen(false); }} >Pricing</NavOption>
           <NavOption onClick={() => { setIsMenuOpen(false); }} >Affiliate</NavOption>
-          <NavOption onClick={() => { setIsMenuOpen(false); }} >Login</NavOption>
+          <Link href="/signin"><NavOption onClick={() => { setIsMenuOpen(false); }}>Login</NavOption></Link>
         </div>
       )}
     </nav>
