@@ -97,7 +97,7 @@ export function useAuth() {
           lastLogin: serverTimestamp() as unknown as Date,
           resumes: [],
           plan: 'free',
-          credits: 5 // Give 5 credits to new users
+          credits: 5
         };
 
         await setDoc(userRef, userData);

@@ -36,7 +36,7 @@ interface PricingPlan {
 
 const pricingFeatures = {
   basic: [
-    { id: 1, title: "20 Ultra Personalized Resumes", included: true },
+    { id: 1, title: "30 Ultra Personalized Resumes", included: true },
     { id: 2, title: "Basic ATS Optimization", included: true },
     { id: 3, title: "PDF Export Format", included: true },
     { id: 4, title: "AI Cover Letters", included: false },
@@ -46,7 +46,7 @@ const pricingFeatures = {
     { id: 8, title: "Priority Support", included: false },
   ],
   pro: [
-    { id: 1, title: "80 Ultra Personalized Resumes", included: true },
+    { id: 1, title: "150 Ultra Personalized Resumes", included: true },
     { id: 2, title: "Advanced ATS Optimization", included: true },
     { id: 3, title: "Multiple Export Formats", included: true },
     { id: 5, title: "Advanced Skill Matching", included: true },
@@ -70,7 +70,7 @@ const pricingPlans: PricingPlan[] = [
     spotlightColor: "rgba(168, 85, 247, 0.15)",
     popular: true,
     ctaText: "Get Started",
-    credits: 80,
+    credits: 150,
   },
   {
     id: 1,
@@ -83,7 +83,7 @@ const pricingPlans: PricingPlan[] = [
     borderColor: "from-blue-500 to-cyan-400",
     spotlightColor: "rgba(59, 130, 246, 0.15)",
     ctaText: "Get Started",
-    credits: 20,
+    credits: 30,
   },
 ];
 
@@ -106,16 +106,16 @@ export default function BillingPage() {
         />
 
         {/* Current Credits */}
-        <motion.div 
+        <motion.div
         variants={{
           hidden: {
             opacity: 0,
-            filter: "blur(10px)", 
+            filter: "blur(10px)",
             transform: "translateY(5%)",
           },
           visible: {
             opacity: 1,
-            filter: "blur(0)", 
+            filter: "blur(0)",
             transform: "translateY(0)",
           },
         }}
@@ -147,12 +147,12 @@ export default function BillingPage() {
               variants={{
                 hidden: {
                   opacity: 0,
-                  filter: "blur(10px)", 
+                  filter: "blur(10px)",
                   transform: "translateY(5%)",
                 },
                 visible: {
                   opacity: 1,
-                  filter: "blur(0)", 
+                  filter: "blur(0)",
                   transform: "translateY(0)",
                 },
               }}

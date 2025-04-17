@@ -28,11 +28,12 @@ interface PricingPlan {
   spotlightColor?: string;
   popular?: boolean;
   ctaText: string;
+  credits: number;
 }
 
 const pricingFeatures = {
   basic: [
-    { id: 1, title: "20 Ultra Personalized Resumes", included: true },
+    { id: 1, title: "30 Ultra Personalized Resumes", included: true },
     { id: 2, title: "Basic ATS Optimization", included: true },
     { id: 3, title: "PDF Export Format", included: true },
     { id: 4, title: "AI Cover Letters", included: false },
@@ -42,7 +43,7 @@ const pricingFeatures = {
     { id: 8, title: "Priority Support", included: false },
   ],
   pro: [
-    { id: 1, title: "80 Ultra Personalized Resumes", included: true },
+    { id: 1, title: "150 Ultra Personalized Resumes", included: true },
     { id: 2, title: "Advanced ATS Optimization", included: true },
     { id: 3, title: "Multiple Export Formats", included: true },
     { id: 5, title: "Advanced Skill Matching", included: true },
@@ -66,6 +67,7 @@ const pricingPlans: PricingPlan[] = [
     spotlightColor: "rgba(168, 85, 247, 0.15)",
     popular: true,
     ctaText: "Get Started",
+    credits: 150,
   },
   {
     id: 1,
@@ -78,15 +80,16 @@ const pricingPlans: PricingPlan[] = [
     borderColor: "from-blue-500 to-cyan-400",
     spotlightColor: "rgba(59, 130, 246, 0.15)",
     ctaText: "Get Started",
+    credits: 30,
   },
-  
+
 ];
 
 export default function Pricing() {
   return (
     <div className="w-full flex flex-col justify-start items-center px-[5%] sm:px-[10%] mt-24 md:mt-48">
       {/* Section Label */}
-      
+
       <motion.div
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
@@ -192,12 +195,19 @@ function PricingCard({ plan }: { plan: PricingPlan }) {
         </p>
 
         {/* Price */}
-        <div className="flex items-end mb-6">
+        <div className="flex items-end mb-2">
           <span style={{ fontFamily: "Geist" }} className="text-white text-3xl md:text-4xl font-bold">
             {plan.price}
           </span>
           <span style={{ fontFamily: "Geist Mono" }} className="text-white/70 text-xs ml-1 mb-1">
             /{plan.period}
+          </span>
+        </div>
+
+        {/* Credits */}
+        <div className="mb-4 bg-white/10 px-3 py-1 rounded-md">
+          <span style={{ fontFamily: "Geist Mono" }} className="text-white text-sm">
+            <span className="font-bold">{plan.credits}</span> Credits
           </span>
         </div>
 
