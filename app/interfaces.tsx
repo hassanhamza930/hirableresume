@@ -5,7 +5,6 @@ export interface UserData {
   photoURL: string | null;
   createdAt: Date;
   lastLogin: Date;
-  resumes: Resume[];
   plan: 'free' | 'premium' | 'enterprise';
   credits:number
 }

@@ -95,7 +95,6 @@ export function useAuth() {
           photoURL: user.photoURL,
           createdAt: serverTimestamp() as unknown as Date,
           lastLogin: serverTimestamp() as unknown as Date,
-          resumes: [],
           plan: 'free',
           credits: 5
         };
