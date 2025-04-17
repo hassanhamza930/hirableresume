@@ -65,7 +65,7 @@ export default function CreateResumeDialog({ open, onOpenChange, userId }: Creat
       <DialogContent className="sm:max-w-[500px] bg-zinc-950 border border-white/10 text-white">
         {isSubmitting ? (
           <div className="py-8 flex flex-col items-center justify-center space-y-6">
-            <img src="/logo.png" className="w-16 h-16 rounded-full animate-pulse"/>
+            <img src="/logo.png" className="w-20 h-20 rounded-full animate-pulse"/>
             <div className="text-center space-y-3">
               <h3 className="text-lg font-semibold text-white">
                 {isGeneratingName ? 'Analyzing Job Description...' : 'Personalizing Your Resume...'}

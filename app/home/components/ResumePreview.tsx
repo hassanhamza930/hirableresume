@@ -4,9 +4,10 @@ import React from 'react';
 import SpotlightCard from '@/components/SpotLightCard';
 import { Button } from '@/components/ui/button';
 import './resume-content.css';
-import { FiDownload } from 'react-icons/fi';
+import { FiDownload, FiCopy } from 'react-icons/fi';
 import { toast } from 'sonner';
 import { useResumeStore } from '@/app/store/resumeStore';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 export default function ResumePreview() {
   const { resumes, selectedResumeId } = useResumeStore();
@@ -33,14 +34,54 @@ export default function ResumePreview() {
 
           {selectedResume && (
             <div className="flex gap-1">
-              <Button
-                variant="outline"
-                size="icon"
-                className="h-7 w-7 border-white/20 hover:bg-white/10 text-white"
-                onClick={() => toast.info('Download feature coming soon!')}
-              >
-                <FiDownload size={14} />
-              </Button>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="h-7 w-7 border-white/20 hover:bg-white/10 text-white"
+                      onClick={() => toast.info('Download feature coming soon!')}
+                    >
+                      <FiDownload size={14} />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Download Resume</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="h-7 w-7 border-white/20 hover:bg-white/10 text-white"
+                      onClick={() => {
+                        if (selectedResume?.content) {
+                          navigator.clipboard.writeText(selectedResume.content)
+                            .then(() => {
+                              toast.success('HTML code copied to clipboard');
+                            })
+                            .catch((error) => {
+                              console.error('Failed to copy HTML:', error);
+                              toast.error('Failed to copy HTML code');
+                            });
+                        } else {
+                          toast.error('No content to copy');
+                        }
+                      }}
+                    >
+                      <FiCopy size={14} />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Copy HTML Code</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
           )}
         </div>
