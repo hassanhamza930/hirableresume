@@ -2,15 +2,14 @@
 
 import React from 'react';
 import SpotlightCard from '@/components/SpotLightCard';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
+import './resume-content.css';
 import { FiDownload } from 'react-icons/fi';
 import { toast } from 'sonner';
 import { useResumeStore } from '@/app/store/resumeStore';
 
 export default function ResumePreview() {
   const { resumes, selectedResumeId } = useResumeStore();
-
   // Find the selected resume
   const selectedResume = selectedResumeId ? resumes.find(resume => resume.id === selectedResumeId) : null;
 
@@ -46,60 +45,88 @@ export default function ResumePreview() {
           )}
         </div>
 
-        <ScrollArea className="flex-1 bg-white/5 rounded-lg border border-white/10 p-2 overflow-y-auto">
+        <div className="flex-1 bg-white/5 rounded-lg border border-white/10 p-4 overflow-auto">
           {!selectedResume ? (
             <div className="flex flex-col items-center justify-center h-full p-4 text-center">
               <p className="text-white/60 text-sm mb-2">No resume selected</p>
               <p className="text-white/40 text-xs">Select a resume from the sidebar or create a new one</p>
             </div>
           ) : selectedResume.content ? (
-            <div className="flex flex-col items-center justify-center h-full">
-              <div className="w-full max-w-[600px] mx-auto bg-white rounded-lg p-4 shadow-lg">
-                {/* Render the resume content */}
-                <div dangerouslySetInnerHTML={{ __html: selectedResume.content }} />
+            <div className="flex flex-col items-center justify-start h-full w-full">
+              <div className="w-full max-w-[900px] mx-auto">
+                {/* Render the resume content in an isolated container */}
+                <div className="resume-content-wrapper">
+                  <div
+                    ref={(el) => {
+                      // Remove any scripts from the content after it's rendered
+                      if (el) {
+                        // Remove scripts
+                        const scripts = el.getElementsByTagName('script');
+                        while (scripts.length > 0) {
+                          scripts[0].parentNode?.removeChild(scripts[0]);
+                        }
+
+                        // Remove style tags
+                        const styles = el.getElementsByTagName('style');
+                        while (styles.length > 0) {
+                          styles[0].parentNode?.removeChild(styles[0]);
+                        }
+
+                        // Remove link tags
+                        const links = el.getElementsByTagName('link');
+                        while (links.length > 0) {
+                          links[0].parentNode?.removeChild(links[0]);
+                        }
+                      }
+                    }}
+                    dangerouslySetInnerHTML={{ __html: selectedResume.content }}
+                  />
+                </div>
               </div>
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center h-full">
-              <div className="w-full max-w-[600px] mx-auto bg-white rounded-lg p-4 shadow-lg">
-                {/* Placeholder resume content for new resumes */}
-                <div className="text-center mb-6">
-                  <h1 className="text-2xl font-bold text-gray-800">Your Name</h1>
-                  <p className="text-gray-600">Your Title</p>
-                  <div className="flex justify-center gap-4 mt-2 text-sm text-gray-500">
-                    <span>email@example.com</span>
-                    <span>•</span>
-                    <span>Phone Number</span>
-                    <span>•</span>
-                    <span>Location</span>
+            <div className="flex flex-col items-center justify-center h-full w-full">
+              <div className="w-full max-w-[600px] mx-auto">
+                {/* Placeholder resume content */}
+                <div className="resume-content-wrapper">
+                  <div className="text-center mb-6">
+                    <h1 className="text-2xl font-bold text-gray-800">Your Name</h1>
+                    <p className="text-gray-600">Your Title</p>
+                    <div className="flex justify-center gap-4 mt-2 text-sm text-gray-500">
+                      <span>email@example.com</span>
+                      <span>•</span>
+                      <span>Phone Number</span>
+                      <span>•</span>
+                      <span>Location</span>
+                    </div>
                   </div>
-                </div>
 
-                <div className="mb-4">
-                  <h2 className="text-lg font-semibold text-gray-800 border-b border-gray-300 pb-1 mb-2">Summary</h2>
-                  <p className="text-gray-700 text-sm">
-                    This resume will be customized based on the job description you provided.
-                    Use the customization input below to tailor your resume for this specific job.
-                  </p>
-                </div>
+                  <div className="mb-4">
+                    <h2 className="text-lg font-semibold text-gray-800 border-b border-gray-300 pb-1 mb-2">Summary</h2>
+                    <p className="text-gray-700 text-sm">
+                      This resume will be customized based on the job description you provided.
+                      Use the customization input below to tailor your resume for this specific job.
+                    </p>
+                  </div>
 
-                <div className="mb-4">
-                  <h2 className="text-lg font-semibold text-gray-800 border-b border-gray-300 pb-1 mb-2">Experience</h2>
-                  <p className="text-gray-700 text-sm italic">
-                    Your experience will be highlighted here after customization.
-                  </p>
-                </div>
+                  <div className="mb-4">
+                    <h2 className="text-lg font-semibold text-gray-800 border-b border-gray-300 pb-1 mb-2">Experience</h2>
+                    <p className="text-gray-700 text-sm italic">
+                      Your experience will be highlighted here after customization.
+                    </p>
+                  </div>
 
-                <div>
-                  <h2 className="text-lg font-semibold text-gray-800 border-b border-gray-300 pb-1 mb-2">Skills</h2>
-                  <p className="text-gray-700 text-sm italic">
-                    Relevant skills for this job will be highlighted here.
-                  </p>
+                  <div>
+                    <h2 className="text-lg font-semibold text-gray-800 border-b border-gray-300 pb-1 mb-2">Skills</h2>
+                    <p className="text-gray-700 text-sm italic">
+                      Relevant skills for this job will be highlighted here.
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
           )}
-        </ScrollArea>
+        </div>
       </div>
     </SpotlightCard>
   );

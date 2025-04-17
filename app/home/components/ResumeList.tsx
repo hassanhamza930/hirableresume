@@ -16,7 +16,7 @@ import { formatRelativeTime } from '@/app/utils/formatTime';
 
 export default function ResumeList({ onSelectResume }: { onSelectResume?: (id: string) => void }) {
   const [dialogOpen, setDialogOpen] = useState(false);
-  const { resumes, isLoading, fetchResumes, setSelectedResumeId } = useResumeStore();
+  const { resumes, isLoading, fetchResumes, setSelectedResumeId, selectedResumeId } = useResumeStore();
   const { userData } = useUserStore();
 
   // Sort resumes by updatedAt date in descending order (newest first)
@@ -82,7 +82,7 @@ export default function ResumeList({ onSelectResume }: { onSelectResume?: (id: s
                   transition={{ duration: 0.3, delay: index * 0.05 }}
                   onClick={() => handleSelectResume(resume.id)}
                 >
-                  <ResumeItem resume={resume} />
+                  <ResumeItem resume={resume} isSelected={resume.id === selectedResumeId} />
                 </motion.div>
               ))}
             </div>
@@ -102,21 +102,21 @@ export default function ResumeList({ onSelectResume }: { onSelectResume?: (id: s
   );
 }
 
-function ResumeItem({ resume }: { resume: Resume }) {
+function ResumeItem({ resume, isSelected }: { resume: Resume; isSelected: boolean }) {
   // Format the updated time in a human-readable format
   const timeAgo = formatRelativeTime(resume.updatedAt);
 
   return (
     <SpotlightCard
-      className="p-2 border border-white/10 hover:border-white/20 bg-white/5 rounded-lg cursor-pointer transition-all duration-200 hover:bg-white/10"
-      spotlightColor="rgba(255, 255, 255, 0.15)"
+      className={`p-2 border ${isSelected ? 'border-orange-400/70 bg-white/10' : 'border-white/10 hover:border-white/20 bg-white/5 hover:bg-white/10'} rounded-lg cursor-pointer transition-all duration-200`}
+      spotlightColor={isSelected ? "rgba(255, 165, 0, 0.2)" : "rgba(255, 255, 255, 0.15)"}
     >
       <div className="flex items-center gap-3">
-        <div className="text-white/70">
+        <div className={isSelected ? "text-orange-400" : "text-white/70"}>
           <FiFileText size={18} />
         </div>
         <div className="flex-1 min-w-0">
-          <h3 style={{ fontFamily: "Geist" }} className="text-sm font-medium text-white truncate">
+          <h3 style={{ fontFamily: "Geist" }} className={`text-sm font-medium ${isSelected ? 'text-orange-400' : 'text-white'} truncate`}>
             {resume.name}
           </h3>
           <p style={{ fontFamily: "Geist Mono" }} className="text-xs text-white/60">
