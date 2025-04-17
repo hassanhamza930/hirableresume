@@ -33,24 +33,7 @@ export default function ResumePreview() {
             >
               <FiDownload size={14} />
             </Button>
-
-            <Button
-              variant="outline"
-              size="icon"
-              className="h-7 w-7 border-white/20 hover:bg-white/10 text-white"
-              onClick={() => toast.info('Share feature coming soon!')}
-            >
-              <FiShare2 size={14} />
-            </Button>
-
-            <Button
-              variant="outline"
-              size="icon"
-              className="h-7 w-7 border-white/20 hover:bg-white/10 text-white"
-              onClick={() => toast.info('Edit feature coming soon!')}
-            >
-              <FiEdit size={14} />
-            </Button>
+            
           </div>
         </div>
 

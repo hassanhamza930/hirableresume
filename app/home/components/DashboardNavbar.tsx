@@ -94,7 +94,7 @@ const DashboardNavbar: React.FC = () => {
       </button>
 
       {/* Desktop navigation */}
-      <div className="hidden sm:flex items-center justify-center gap-x-10">
+      <div className="hidden sm:flex items-center justify-center gap-x-4">
         {/* Credits display - clickable */}
         <div
           onClick={() => router.push('/home/billing')}

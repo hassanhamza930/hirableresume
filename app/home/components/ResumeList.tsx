@@ -34,22 +34,23 @@ export default function ResumeList({ onSelectResume }: { onSelectResume?: (id: s
       className="h-full w-full border border-white/10 bg-zinc-950/50 backdrop-blur-xl p-2 rounded-xl"
       spotlightColor="rgba(255, 255, 255, 0.1)"
     >
-      <div className="flex flex-col h-full">
-        <div className="flex items-center justify-between mb-2">
-          <h2 style={{ fontFamily: "Geist" }} className="text-base font-semibold text-white">Your Resumes</h2>
+      <div className="flex flex-col h-full p-2">
+        <div className="mb-2">
+          <div className="flex items-center justify-between mb-2">
+            <h2 style={{ fontFamily: "Geist" }} className="text-base font-semibold text-white">Your Resumes</h2>
+          </div>
           <Button
-            variant="outline"
-            size="icon"
-            className="h-7 w-7 border-white/20 hover:bg-white/10 text-white"
+            className="w-full flex flex-row items-center justify-center gap-1 shadow-none"
             onClick={() => toast.info('Create new resume feature coming soon!')}
           >
-            <FiPlus size={14} />
+            <FiPlus size={12} />
+            <span>Create a new resume</span>
           </Button>
         </div>
 
-        <Separator className="bg-white/10 mb-2" />
+        <Separator className="bg-white/10 my-2 w-full" />
 
-        <ScrollArea className="flex-1 pr-2 h-[calc(100%-40px)] overflow-auto">
+        <ScrollArea className="flex-1 h-[calc(100%-70px)] overflow-auto w-full">
           <div className="space-y-3">
             {placeholderResumes.map((resume, index) => (
               <motion.div
@@ -86,13 +87,6 @@ function ResumeItem({ resume }: { resume: typeof placeholderResumes[0] }) {
           <p style={{ fontFamily: "Geist Mono" }} className="text-xs text-white/60">
             Updated {resume.updatedAt.toLocaleDateString()}
           </p>
-        </div>
-        <div className={`px-2 py-1 rounded-full text-xs ${
-          resume.status === 'completed'
-            ? 'bg-green-500/20 text-green-300'
-            : 'bg-amber-500/20 text-amber-300'
-        }`}>
-          {resume.status === 'completed' ? 'Ready' : 'Draft'}
         </div>
       </div>
     </SpotlightCard>
