@@ -5,12 +5,10 @@ import { LoggedInWrapper } from '../components/LoggedInWrapper';
 import DashboardNavbar from './components/DashboardNavbar';
 import ResumeList from './components/ResumeList';
 import ResumeEditor from './components/ResumeEditor';
-// We're not using the resizable components anymore
-// import './components/custom-resizable.css';
+import { useResumeStore } from '../store/resumeStore';
 
 export default function HomePage() {
-  // This state will be used to track which resume is selected
-  const [, setSelectedResumeId] = React.useState<string | null>(null);
+  const { setSelectedResumeId } = useResumeStore();
 
   return (
     <LoggedInWrapper>

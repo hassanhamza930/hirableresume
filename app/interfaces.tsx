@@ -16,5 +16,7 @@ export interface Resume {
   updatedAt: Date;
   content: string;
   jobDescription?: string;
+  companyInfo?: string;
+  ownerId: string;
   status: 'draft' | 'completed';
 }
