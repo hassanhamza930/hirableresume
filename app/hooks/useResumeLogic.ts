@@ -292,16 +292,16 @@ Example Format, Try to keep the generated resume in similar style, following thi
         <div style="display:grid; grid-template-columns: 160px 1fr; gap:0px 10px;">
             <div style="font-family:'Geist Mono',monospace; font-size:15px; font-weight:700; color:#30343A; margin-bottom:8px;">Programming</div>
             <div style="font-size:15px; margin-bottom:8px;">Python (Pandas, NumPy, Scikit-learn, TensorFlow), SQL (advanced), DAX, R, Java (intermediate)</div>
-            
+
             <div style="font-family:'Geist Mono',monospace; font-size:15px; font-weight:700; color:#30343A; margin-bottom:8px;">Data Visualization</div>
             <div style="font-size:15px; margin-bottom:8px;">Power BI, Tableau, Qlik, Matplotlib, Seaborn, D3.js</div>
-            
+
             <div style="font-family:'Geist Mono',monospace; font-size:15px; font-weight:700; color:#30343A; margin-bottom:8px;">Cloud & Databases</div>
             <div style="font-size:15px; margin-bottom:8px;">AWS (S3, Redshift, Lambda), Azure (Data Factory, Synapse), PostgreSQL, MongoDB</div>
-            
+
             <div style="font-family:'Geist Mono',monospace; font-size:15px; font-weight:700; color:#30343A; margin-bottom:8px;">Machine Learning</div>
             <div style="font-size:15px; margin-bottom:8px;">Regression, Classification, Clustering, Time-series Analysis, Deep Learning, Optimization</div>
-            
+
             <div style="font-family:'Geist Mono',monospace; font-size:15px; font-weight:700; color:#30343A; margin-bottom:8px;">Banking Domain</div>
             <div style="font-size:15px; margin-bottom:8px;">Retail Banking, Commercial Banking, Wholesale Banking, Risk Management, Compliance Reporting</div>
         </div>
@@ -519,20 +519,39 @@ Example Format, Try to keep the generated resume in similar style, following thi
       // Log the resume content for debugging
       console.log('Resume content found, length:', currentResume.content.length);
 
-      try {
-        // Prepare the prompt for the AI
-        const prompt = `
-          Update this HTML based resume based on the following customization request:
+      // First try a simple approach - just append the customization text
+      // This ensures we have a fallback even if the API call fails
+      const simpleUpdatedContent = `${currentResume.content.trim()}
+<div style="margin-top: 20px; border-top: 1px solid #ccc; padding-top: 10px;">
+  <h3 style="font-size: 16px; margin-bottom: 5px;">Customization Notes:</h3>
+  <p style="font-style: italic;">${customizationInput}</p>
+</div>`;
 
-          HTML based Resume:
+      try {
+        // Now try the AI-powered approach
+        // Prepare the prompt for the AI - specifically formatted for Claude
+        const prompt = `
+          Human: I need you to update an HTML resume based on a customization request. Here's the current HTML resume and the customization request:
+
+          Current HTML Resume:
           ${currentResume.content}
           --------------
           Customization Request:
           "${customizationInput}"
 
           Please create an updated version of the resume in clean, professional HTML format that can be directly injected into a webpage. The HTML should be styled with inline CSS for a clean, professional appearance with good typography and spacing.
-          Only reply with HTML
-          DON'T add any other text or formatting.
+
+          IMPORTANT INSTRUCTIONS:
+          1. Only reply with HTML
+          2. Do NOT include any markdown formatting, code blocks, or explanatory text
+          3. Do NOT use any <style> tags, <link> tags, or <script> tags
+          4. Use only inline styles on individual HTML elements
+          5. Do NOT use any CSS classes or IDs for styling
+          6. Your response should start with an HTML tag
+          7. Do not include any explanations or comments in your response
+          8. Do not wrap your response in code blocks
+
+          Assistant:
         `;
 
         // Call OpenRouter API
@@ -561,27 +580,54 @@ Example Format, Try to keep the generated resume in similar style, following thi
 
         const data = await response.json();
 
-        // Check if data.choices exists and has at least one element
-        if (!data.choices || data.choices.length === 0) {
-          throw new Error('API response did not contain any choices');
+        // Log the API response for debugging
+        console.log('API Response structure:', JSON.stringify(data, null, 2));
+
+        // Different AI providers have different response formats
+        // Try to handle multiple formats
+        let generatedContent = '';
+
+        // OpenAI format
+        if (data.choices && data.choices.length > 0) {
+          if (data.choices[0].message && data.choices[0].message.content) {
+            generatedContent = data.choices[0].message.content.trim();
+            console.log('Found content in OpenAI format');
+          } else if (data.choices[0].text) {
+            // Some models might return text directly
+            generatedContent = data.choices[0].text.trim();
+            console.log('Found content in OpenAI text format');
+          }
+        }
+        // Anthropic format
+        else if (data.content && data.content.length > 0 && data.content[0].text) {
+          generatedContent = data.content[0].text.trim();
+          console.log('Found content in Anthropic format');
+        }
+        // Anthropic alternative format
+        else if (data.content && typeof data.content === 'string') {
+          generatedContent = data.content.trim();
+          console.log('Found content in Anthropic alternative format');
         }
 
-        // Check if the first choice has a message with content
-        if (!data.choices[0].message || !data.choices[0].message.content) {
-          throw new Error('API response choice does not contain message content');
+        if (!generatedContent) {
+          console.error('Could not extract content from API response:', data);
+          throw new Error('Could not extract content from API response');
         }
-
-        const generatedContent = data.choices[0].message.content.trim();
 
         // Extract HTML content if it's wrapped in code blocks or has extra text
         let htmlContent = generatedContent;
 
+        console.log('Processing generated content, length:', generatedContent.length);
+        console.log('Content starts with:', generatedContent.substring(0, 50));
+
         // Handle content wrapped in code blocks (```html ... ```)
         if (generatedContent.includes('```html') && generatedContent.includes('```')) {
+          console.log('Extracting HTML from code block with html tag');
           htmlContent = generatedContent.split('```html')[1].split('```')[0].trim();
         }
         // Handle content wrapped in just backticks without language specification
         else if (generatedContent.includes('```') && generatedContent.split('```').length >= 3) {
+          console.log('Extracting HTML from generic code block');
           htmlContent = generatedContent.split('```')[1].trim();
         }
         // Handle content that starts with <!DOCTYPE or <html
@@ -589,8 +635,11 @@ Example Format, Try to keep the generated resume in similar style, following thi
           // Find the first HTML-like tag
           const htmlStartMatch = generatedContent.match(/<\w+[^>]*>/i);
           if (htmlStartMatch && htmlStartMatch.index !== undefined) {
+            console.log('Extracting HTML starting from first tag');
             htmlContent = generatedContent.substring(htmlStartMatch.index);
           }
+        } else {
+          console.log('Content already starts with HTML tag, using as-is');
         }
 
         // Update resume in Firebase
@@ -616,18 +665,11 @@ Example Format, Try to keep the generated resume in similar style, following thi
         // Notify user but still try to update with the customization text directly
         toast.error('Could not process customization with AI. Applying basic update instead.');
 
-        // Apply a simple update by appending the customization as a note
-        const updatedContent = `
-          ${currentResume.content}
-          <div style="margin-top: 20px; border-top: 1px solid #ccc; padding-top: 10px;">
-            <h3 style="font-size: 16px; margin-bottom: 5px;">Customization Notes:</h3>
-            <p style="font-style: italic;">${customizationInput}</p>
-          </div>
-        `;
+        // Use the simple update we prepared earlier
 
         // Update resume in Firebase with the simple update
         const fallbackSuccess = await updateResume(resumeId, {
-          content: updatedContent,
+          content: simpleUpdatedContent,
           status: 'completed'
         });
 
