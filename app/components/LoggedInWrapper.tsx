@@ -59,7 +59,7 @@ export const LoggedInWrapper = ({ children }: LoggedInWrapperProps) => {
     return (
       <motion.div 
       initial
-      className="flex items-center justify-center min-h-screen">
+      className="flex items-center justify-center h-full w-full">
         <motion.img 
         animate={{
           scale:[1,1.2,1],

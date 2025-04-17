@@ -1,39 +1,34 @@
 'use client';
 
 import React from 'react';
-import { Button } from '@/components/ui/button';
-import { toast } from 'sonner';
 import { LoggedInWrapper } from '../components/LoggedInWrapper';
-import BlurReveal from '@/components/BlurText';
 import DashboardNavbar from './components/DashboardNavbar';
+import ResumeList from './components/ResumeList';
+import ResumeEditor from './components/ResumeEditor';
+// We're not using the resizable components anymore
+// import './components/custom-resizable.css';
 
 export default function HomePage() {
+  // This state will be used to track which resume is selected
+  const [, setSelectedResumeId] = React.useState<string | null>(null);
+
   return (
     <LoggedInWrapper>
-      <div className="relative z-0 w-full min-h-screen flex flex-col justify-start items-center px-[5%] md:px-[10%] pt-24 md:pt-32 pb-36">
-        <DashboardNavbar />
+      {/* Fixed navbar */}
+      <DashboardNavbar />
 
-        {/* Title */}
-        <BlurReveal
-          style={{ fontFamily: "Special Gothic Expanded One" }}
-          className="mt-5 w-full max-w-[550px] px-4 text-3xl md:text-5xl text-center flex flex-wrap gap-x-2 justify-center items-center text-shadow-2xs text-shadow-blue-600"
-          text="Welcome to HirableResume"
-        />
+      {/* Main content - positioned below navbar */}
+      <div className="flex flex-col w-full h-[calc(100vh-64px)] mt-14 pb-2 overflow-hidden">
+        {/* Dashboard content */}
+        <div className="flex flex-1 h-full w-full">
+          {/* Left column: Resume list - fixed width with overflow handling */}
+          <div className="w-[350px] flex-shrink-0 overflow-hidden">
+            <ResumeList onSelectResume={setSelectedResumeId} />
+          </div>
 
-        {/* Subtitle */}
-        <BlurReveal
-          style={{ fontFamily: "Geist Mono" }}
-          className="mt-5 text-sm md:text-md font-normal text-center text-white w-full max-w-[450px] px-4"
-          text="Your dashboard is coming soon. Stay tuned for updates!"
-        />
-
-        {/* Dashboard content will go here */}
-        <div className="mt-10 w-full max-w-4xl p-6 md:p-8 rounded-xl backdrop-blur-xl backdrop-brightness-50 border border-white/20 border-dashed">
-          <div className="text-center text-white">
-            <p className="mb-4">This is your dashboard. More features will be added soon.</p>
-            <Button onClick={() => toast.info('Feature coming soon!')}>
-              Create New Resume
-            </Button>
+          {/* Right column: Resume editor */}
+          <div className="flex-1">
+            <ResumeEditor />
           </div>
         </div>
       </div>

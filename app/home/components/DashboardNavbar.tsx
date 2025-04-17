@@ -71,7 +71,7 @@ const DashboardNavbar: React.FC = () => {
   return (
     <nav
       style={{ fontFamily: "Geist Mono" }}
-      className="fixed z-20 top-0 left-0 right-0 flex items-center justify-between shadow-sm shadow-white/5 md:shadow-white/10 px-4 sm:px-10 py-2 text-sm font-medium text-white bg-white/5 md:border-b border-white/20 border-dashed transition-all duration-300 backdrop-blur-xl backdrop-brightness-50"
+      className="fixed z-20 top-0 left-0 right-0 flex items-center justify-between shadow-sm shadow-white/5 md:shadow-white/10 px-4 sm:px-10 py-2 text-sm font-medium text-white bg-white/5 md:border-b-[1px] border-white/20 transition-all duration-300 backdrop-blur-xl backdrop-brightness-50"
     >
       {/* Logo and back button */}
       <div className="flex items-center gap-2">
