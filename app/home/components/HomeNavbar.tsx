@@ -31,7 +31,7 @@ const NavOption = ({
   return <button onClick={onClick} className={`transition-all duration-200 hover:text-white/90 hover:underline cursor-pointer w-max ${className || ''}`}>{children}</button>;
 };
 
-const DashboardNavbar: React.FC = () => {
+const HomeNavbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { user, signOut } = useAuth();
   const { userData } = useUserStore();
@@ -221,4 +221,4 @@ const DashboardNavbar: React.FC = () => {
   );
 };
 
-export default DashboardNavbar;
+export default HomeNavbar;

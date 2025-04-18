@@ -9,7 +9,7 @@ import { FaCheck, FaTimes } from "react-icons/fa";
 import { MdOutlineAutoAwesome } from "react-icons/md";
 import { HiOutlineLightningBolt } from "react-icons/hi";
 import { LoggedInWrapper } from '../../components/LoggedInWrapper';
-import DashboardNavbar from '../components/DashboardNavbar';
+import DashboardNavbar from '../components/HomeNavbar';
 import { useAuth } from '../../hooks/useAuth';
 import { useUserStore } from '../../store/userStore';
 
