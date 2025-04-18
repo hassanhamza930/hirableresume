@@ -8,6 +8,8 @@ import { SYSTEM_PROMPT } from '@/app/prompts';
 import { v4 as uuidv4 } from 'uuid';
 import { getFirestore, collection, addDoc, serverTimestamp, updateDoc, query, where, limit, getDocs } from 'firebase/firestore';
 import { toast } from 'sonner';
+import { deductCredits } from '@/app/utils/creditUtils';
+import { useRouter } from 'next/navigation';
 
 interface UseResumeLogicProps {
   userId?: string;
@@ -18,6 +20,7 @@ export default function useResumeLogic({ userId }: UseResumeLogicProps = {}) {
   const { userData } = useUserStore();
   const { user } = useAuth();
   const { selectResume } = useResumeStore();
+  const router = useRouter();
 
   // Get the actual user ID (from props or from auth)
   const actualUserId = userId || user?.uid;
@@ -38,6 +41,13 @@ export default function useResumeLogic({ userId }: UseResumeLogicProps = {}) {
       return null;
     }
 
+    // Check if user has enough credits
+    if (userData.credits === undefined || userData.credits <= 0) {
+      toast.error('You have run out of credits. Purchase more credits to continue.');
+      router.push('/home/billing');
+      return null;
+    }
+
     setIsLoading(true);
 
     try {
@@ -49,6 +59,14 @@ export default function useResumeLogic({ userId }: UseResumeLogicProps = {}) {
 
       if (!resumeContent) {
         throw new Error('Failed to generate resume content');
+      }
+
+      // Deduct 1 credit from the user's account
+      const creditDeducted = await deductCredits(actualUserId);
+
+      if (!creditDeducted) {
+        toast.error('Failed to deduct credits. Please try again.');
+        return null;
       }
 
       // Create a new resume document in Firebase
@@ -193,6 +211,13 @@ export default function useResumeLogic({ userId }: UseResumeLogicProps = {}) {
       return false;
     }
 
+    // Check if user has enough credits
+    if (userData?.credits === undefined || userData.credits <= 0) {
+      toast.error('You have run out of credits. Purchase more credits to continue.');
+      router.push('/home/billing');
+      return false;
+    }
+
     setIsLoading(true);
 
     try {
@@ -214,6 +239,14 @@ export default function useResumeLogic({ userId }: UseResumeLogicProps = {}) {
           updatedContent = aiUpdatedContent;
         } else {
           throw new Error('Failed to generate updated resume content');
+        }
+
+        // Deduct 1 credit from the user's account
+        const creditDeducted = await deductCredits(actualUserId);
+
+        if (!creditDeducted) {
+          toast.error('Failed to deduct credits. Please try again.');
+          return false;
         }
       }
 
@@ -265,7 +298,7 @@ export default function useResumeLogic({ userId }: UseResumeLogicProps = {}) {
           'X-Title': 'HirableResume'
         },
         body: JSON.stringify({
-          model: 'anthropic/claude-3.7-sonnet',
+          model: 'google/gemini-2.5-flash-preview',
           messages: [
             {
               role: 'system',
@@ -273,7 +306,21 @@ export default function useResumeLogic({ userId }: UseResumeLogicProps = {}) {
             },
             {
               role: 'user',
-              content: `Here is my current resume in HTML format:\n\n${currentContent}\n\nPlease update it based on this request: ${userRequest}. Reply with entire updated HTML of the entire page and not just updated section`
+              content: `
+              Data about the user's profile:
+              ${userData?.resumeData}
+
+              ------------------------
+              Here is my current resume in HTML format:
+              ${currentContent}
+              
+              --------------------------
+              Please update it based on this request: 
+              ${userRequest}. 
+              
+              
+              -----------------------------
+              Reply with entire updated HTML of the entire page and not just updated section.`
             }
           ],
         })
