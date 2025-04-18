@@ -151,7 +151,8 @@ export default function Features() {
       </div>
 
       {/* Key Features Section */}
-      <div className="mt-24 md:mt-48 w-full relative">
+      <div className="mt-24 md:mt-48 w-full relative flex flex-col justify-center items-center overflow-hidden">
+
 
         <motion.div
           initial={{ opacity: 0 }}
@@ -166,17 +167,17 @@ export default function Features() {
 
         <BlurReveal
           style={{ fontFamily: "Special Gothic Expanded One" }}
-          className="mb-5 text-2xl sm:text-3xl md:text-4xl text-center flex flex-wrap gap-x-2 justify-center items-center text-shadow-2xs text-shadow-blue-600 px-4"
-          text="AI is Your Unfair Advantage"
+          className="mb-5 text-2xl sm:text-3xl md:text-4xl text-center flex flex-wrap gap-x-2 justify-center items-center text-shadow-2xs text-shadow-blue-600 px-4 md:w-[600px]"
+          text="Forget Resume Templates, AI is Your Unfair Advantage"
         />
 
         <BlurReveal
           style={{ fontFamily: "Geist Mono" }}
           className="mb-8 md:mb-16 text-sm md:text-md font-normal text-center text-white w-full max-w-[550px] mx-auto px-4"
-          text="We supercharge your profile with best resume practices and make sure your resume is custom tailored for each specific job applications."
+          text="We supercharge your profile with the best resume practices and make sure your resume is custom tailored for each specific job applications."
         />
 
-        <div className="w-full flex flex-wrap justify-center items-center gap-5">
+        <div className="w-full flex flex-wrap justify-center items-center gap-2 md:gap-5">
           {keyFeatures.map((feature, index) => (
             <motion.div
               key={feature.id}
