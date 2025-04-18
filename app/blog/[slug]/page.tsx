@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 
+// Define the blog post interface
 interface BlogPost {
   id: string;
   title: string;
@@ -154,8 +156,16 @@ const blogPosts: BlogPost[] = [
   },
 ];
 
-export async function generateMetadata({ params }: { params: { slug: string } }) {
-  const post = blogPosts.find(post => post.slug === params.slug);
+// Define the page props type
+type Props = {
+  params: Promise<{ slug: string }>
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>
+}
+
+// Generate metadata for the page
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+  const post = blogPosts.find(post => post.slug === slug);
 
   if (!post) {
     return {
@@ -197,8 +207,10 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   };
 }
 
-export default function BlogPostPage({ params }: { params: { slug: string } }) {
-  const post = blogPosts.find(post => post.slug === params.slug);
+// Define the page component
+export default async function Page({ params }: Props) {
+  const { slug } = await params;
+  const post = blogPosts.find(post => post.slug === slug);
 
   if (!post) {
     notFound();
