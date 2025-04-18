@@ -1,11 +1,24 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { getFirestore, collection, query, where, getDocs, limit } from 'firebase/firestore';
 import './print.css';
 
-export default function PrintPage() {
+// Loading component for Suspense fallback
+function PrintPageLoading() {
+  return (
+    <div className="loading-container">
+      <div className="text-center">
+        <div className="loading-spinner mx-auto"></div>
+        <p className="mt-4 text-gray-700">Preparing your resume for printing...</p>
+      </div>
+    </div>
+  );
+}
+
+// Main content component that uses the search params
+function PrintPageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [resumeContent, setResumeContent] = useState<string>('');
@@ -121,5 +134,14 @@ export default function PrintPage() {
         </button>
       </div>
     </div>
+  );
+}
+
+// Main page component with Suspense boundary
+export default function PrintPage() {
+  return (
+    <Suspense fallback={<PrintPageLoading />}>
+      <PrintPageContent />
+    </Suspense>
   );
 }
