@@ -4,6 +4,7 @@ import ServerTestimonials from "@/components/server/Testimonials";
 import ServerFeatures from "@/components/server/Features";
 import ServerPricing from "@/components/server/Pricing";
 import ServerFAQs from "@/components/server/FAQs";
+import ServerResources from "@/components/server/Resources";
 import { LoggedOutWrapper } from "./components/LoggedOutWrapper";
 
 export default function Home() {
@@ -14,6 +15,7 @@ export default function Home() {
       <ServerFeatures />
       <ServerTestimonials />
       <ServerPricing />
+      <ServerResources />
       <ServerFAQs />
 
       {/* Hidden client component for authentication check */}
