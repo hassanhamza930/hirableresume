@@ -93,7 +93,11 @@ export default function useResumeLogic({ userId }: UseResumeLogicProps = {}) {
       // Select the newly created resume
       selectResume(resumeId);
 
-      toast.success('Resume created successfully');
+      // Show success message after loading is complete
+      setTimeout(() => {
+        toast.success('Resume created successfully');
+      }, 500);
+
       return resumeData;
     } catch (error) {
       console.error('Error creating resume:', error);
@@ -172,7 +176,7 @@ export default function useResumeLogic({ userId }: UseResumeLogicProps = {}) {
           'X-Title': 'HirableResume'
         },
         body: JSON.stringify({
-          model: 'anthropic/claude-3.7-sonnet',
+          model: 'openai/o4-mini',
           messages: [
             {
               role: 'system',
@@ -271,6 +275,11 @@ export default function useResumeLogic({ userId }: UseResumeLogicProps = {}) {
 
       // The onSnapshot listener will automatically update the store
 
+      // Show success message after loading is complete
+      setTimeout(() => {
+        toast.success('Resume updated successfully');
+      }, 500);
+
       return true;
     } catch (error) {
       console.error('Error updating resume:', error);
@@ -313,12 +322,12 @@ export default function useResumeLogic({ userId }: UseResumeLogicProps = {}) {
               ------------------------
               Here is my current resume in HTML format:
               ${currentContent}
-              
+
               --------------------------
-              Please update it based on this request: 
-              ${userRequest}. 
-              
-              
+              Please update it based on this request:
+              ${userRequest}.
+
+
               -----------------------------
               Reply with entire updated HTML of the entire page and not just updated section.`
             }

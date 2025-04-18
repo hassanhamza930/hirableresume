@@ -9,9 +9,11 @@ import CreateResumeModal from './CreateResumeModal';
 import { toast } from 'sonner';
 import useResumeLogic from '../../hooks/useResumeLogic';
 import { useResumeStore } from '@/app/store/resumeStore';
+import LoadingOverlay from './LoadingOverlay';
 
 const ResumeEditorComponent: React.FC = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isCreatingNewResume, setIsCreatingNewResume] = useState(false);
   const { createResume, updateResume, isLoading } = useResumeLogic();
   const { resumes, selectedResumeId } = useResumeStore();
   const router = useRouter();
@@ -31,17 +33,19 @@ const ResumeEditorComponent: React.FC = () => {
 
   // Handle creating a new resume with job description
   const handleCreateNewResume = async (jobDescription: string) => {
-    // Create a new resume using the useResumeLogic hook
-    toast.loading('Creating your tailored resume...', { id: 'create-resume' });
+    // Set creating new resume state to true to show loading overlay
+    setIsCreatingNewResume(true);
 
-    const newResume = await createResume(jobDescription);
+    try {
+      // Create a new resume using the useResumeLogic hook
+      const newResume = await createResume(jobDescription);
 
-    if (newResume) {
-      toast.success('Resume created successfully!', { id: 'create-resume' });
-      // In a real implementation, we would select the newly created resume
-      // setSelectedResumeId(newResume.id);
-    } else {
-      toast.error('Failed to create resume', { id: 'create-resume' });
+      if (!newResume) {
+        toast.error('Failed to create resume');
+      }
+    } finally {
+      // Reset creating state when done
+      setIsCreatingNewResume(false);
     }
   };
 
@@ -68,8 +72,8 @@ const ResumeEditorComponent: React.FC = () => {
         // First navigate to the print route with just the resume ID
         router.push(`/print?id=${selectedResumeId}`);
 
-        
-       
+
+
       } catch (error) {
         console.error('Error preparing PDF download:', error);
         toast.error('Failed to prepare PDF download');
@@ -82,13 +86,10 @@ const ResumeEditorComponent: React.FC = () => {
   // Handle updating resume content
   const handleUpdateResume = async (userRequest: string) => {
     if (selectedResumeId) {
-      toast.loading('Updating resume...', { id: 'update-resume' });
       const success = await updateResume(selectedResumeId, userRequest);
 
-      if (success) {
-        toast.success('Resume updated successfully!', { id: 'update-resume' });
-      } else {
-        toast.error('Failed to update resume', { id: 'update-resume' });
+      if (!success) {
+        toast.error('Failed to update resume');
       }
     } else {
       toast.error('No resume selected');
@@ -104,7 +105,7 @@ const ResumeEditorComponent: React.FC = () => {
         />
 
         {/* Right Column - Resume Preview and Editor */}
-        <div className="flex-1 h-full flex flex-col overflow-hidden">
+        <div className="flex-1 h-full flex flex-col overflow-hidden relative">
           {selectedResume ? (
             <>
               {/* Resume Preview */}
@@ -112,6 +113,8 @@ const ResumeEditorComponent: React.FC = () => {
                 resume={selectedResume}
                 onCopyHTML={handleCopyHTML}
                 onDownload={handleDownload}
+                isLoading={isLoading}
+                loadingMessage={'Adding magic to your resume...'}
               />
 
               {/* Resume Editor */}
@@ -120,6 +123,12 @@ const ResumeEditorComponent: React.FC = () => {
                 isLoading={isLoading}
               />
             </>
+          ) : isCreatingNewResume ? (
+            <div className="flex-1 flex flex-col p-6 overflow-hidden relative">
+              <div className="flex-1 min-h-0 overflow-hidden relative bg-zinc-900/50 rounded-lg border border-white/10">
+                <LoadingOverlay isVisible={true} message={'Creating your tailored resume...'} />
+              </div>
+            </div>
           ) : (
             <div className="flex items-center justify-center h-full">
               <p className="text-white/60">Select a resume or create a new one</p>

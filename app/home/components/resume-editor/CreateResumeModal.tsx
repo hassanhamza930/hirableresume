@@ -28,9 +28,12 @@ const CreateResumeModal: React.FC<CreateResumeModalProps> = ({
     }
 
     try {
-      await onCreateResume(jobDescription);
+      // Close the modal immediately
       resetForm();
       onClose();
+
+      // Then start the resume creation process
+      await onCreateResume(jobDescription);
     } catch (error) {
       console.error('Error creating resume:', error);
     }

@@ -5,20 +5,25 @@ import { Button } from '@/components/ui/button';
 import { FileType, CopyIcon } from 'lucide-react';
 import SpotlightCard from '@/components/SpotLightCard';
 import { Resume } from './types';
+import LoadingOverlay from './LoadingOverlay';
 
 interface ResumePreviewProps {
   resume: Resume;
   onCopyHTML: () => void;
   onDownload: () => void;
+  isLoading?: boolean;
+  loadingMessage?: string;
 }
 
 const ResumePreview: React.FC<ResumePreviewProps> = ({
   resume,
   onCopyHTML,
-  onDownload
+  onDownload,
+  isLoading = false,
+  loadingMessage
 }) => {
   return (
-    <div className="flex-1 flex flex-col p-6 overflow-hidden">
+    <div className="flex-1 flex flex-col p-6 pt-2 overflow-hidden">
       {/* Header with title and buttons */}
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-white text-md font-medium" style={{ fontFamily: "Geist" }}>
@@ -26,7 +31,7 @@ const ResumePreview: React.FC<ResumePreviewProps> = ({
         </h2>
         <div className="flex gap-2">
           <Button
-            onClick={(e) => {
+            onClick={() => {
               onCopyHTML();
             }}
             size="sm"
@@ -37,7 +42,7 @@ const ResumePreview: React.FC<ResumePreviewProps> = ({
             <span>Copy HTML</span>
           </Button>
           <Button
-            onClick={(e) => {
+            onClick={() => {
               onDownload();
             }}
             size="sm"
@@ -51,7 +56,7 @@ const ResumePreview: React.FC<ResumePreviewProps> = ({
       </div>
 
       {/* Scrollable resume content container */}
-      <div className="flex-1 min-h-0 overflow-hidden">
+      <div className="flex-1 min-h-0 overflow-hidden relative rounded-2xl">
         <SpotlightCard
           className="w-full h-full border border-white/10 bg-white backdrop-blur-xl"
           spotlightColor="rgba(255, 255, 255, 0.05)"
@@ -61,6 +66,9 @@ const ResumePreview: React.FC<ResumePreviewProps> = ({
             dangerouslySetInnerHTML={{ __html: resume.content }}
           />
         </SpotlightCard>
+
+        {/* Loading overlay */}
+        <LoadingOverlay isVisible={isLoading} message={loadingMessage} />
       </div>
     </div>
   );
