@@ -10,8 +10,41 @@ Throughout this project, logic and UI are separated to ensure maintainability an
 
 ## Recent Changes
 
-### 2025-04-15
-- Updated the SpinningLogo component: added a hover animation that smoothly scales up the logo, and ensured it returns to the original spinning animation on mouse leave. Fixed TypeScript syntax errors in the component.
-- Updated the Navbar component: applied a slight rotation to the logo container for a modern, playful effect using Tailwind's `rotate-[-6deg]` utility.
-- Updated the Navbar component: replaced the 'MyApp' text with the `logo.png` image from the public directory and the brand name 'HirableResume' for a more professional and branded navigation bar.
-- Google Fonts are now loaded using a `<link>` tag in the `<head>` section of `app/layout.tsx` for proper font loading in Next.js. The previous `@import` approach in CSS was removed due to lack of support for remote font imports in Next.js app directory CSS files.
+### 2025-04-20
+- Documented the new single-function API for `useResumeLogic` and the new `prompts.ts` file for centralized prompt management.
+
+### 2025-04-18
+- Refactored `useResumeLogic` hook to expose only a single function: `generateResumeContent`, which handles both resume creation and update based on a `userRequest` parameter.
+-## useResumeLogic Hook (API)
+
+The `useResumeLogic` hook now exposes only two functions:
+
+```typescript
+const { generateResumeContent, generateResumeName } = useResumeLogic({ userId });
+```
+
+### Usage
+- To **create** a resume:
+  ```typescript
+  generateResumeContent({ mode: 'create', jobDescription, companyInfo })
+  ```
+- To **update** a resume:
+  ```typescript
+  generateResumeContent({ mode: 'update', resumeId, customizationInput, originalResume })
+  ```
+- To **generate a resume name**:
+  ```typescript
+  const name = await generateResumeName(jobDescription, companyInfo);
+  ```
+
+All fallback and helper functions have been removed for clarity and simplicity. Only these two functions are available for use in the UI and business logic.
+
+## Prompt Management
+
+All system and user prompt templates for resume generation are now stored in `app/prompts.ts` at the app root. Import and use these templates in your logic as needed:
+
+```typescript
+import * as prompts from '@/app/prompts';
+```
+
+This keeps prompt management centralized and maintainable.
