@@ -5,7 +5,7 @@ export interface UserData {
   photoURL: string | null;
   createdAt: Date;
   lastLogin: Date;
-  plan: 'free' | 'premium' | 'enterprise';
+  plan: 'free' | 'premium';
   credits: number;
   onboarded?: boolean;
   resumeData?: string; // User's resume data in natural language

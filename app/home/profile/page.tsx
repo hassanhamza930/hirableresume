@@ -9,11 +9,11 @@ import { useUserStore } from '../../store/userStore';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import SpotlightCard from '@/components/SpotLightCard';
-import { UploadIcon, SaveIcon } from 'lucide-react';
+import { SaveIcon, UploadIcon } from 'lucide-react';
 import { motion } from 'motion/react';
 
 export default function ProfilePage() {
-  const { user, updateUserData } = useAuth();
+  const { updateUserData } = useAuth();
   const { userData } = useUserStore();
   const router = useRouter();
   const [resumeData, setResumeData] = useState('');
@@ -74,42 +74,40 @@ export default function ProfilePage() {
     }
 
     setIsUploading(true);
+    toast.info('Uploading PDF for text extraction...');
+
     try {
-      // Create a FormData object to send the file
+      // Create a FormData object to send the file to the server
       const formData = new FormData();
       formData.append('file', file);
 
-      // In a real implementation, you would send this to a server endpoint
-      // that extracts text from the PDF. For now, we'll simulate this with a timeout.
-      toast.info('Extracting text from PDF...');
+      // Make an API call to the server-side endpoint
+      const response = await fetch('/api/extract-pdf', {
+        method: 'POST',
+        body: formData,
+      });
 
-      // Simulate PDF text extraction (would be replaced with actual API call)
-      setTimeout(() => {
-        // This is where you would normally set the extracted text
-        const extractedText = `Sample extracted text from ${file.name}.
+      // Check if the response is OK
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Failed to extract text from PDF');
+      }
 
-Name: ${user?.displayName || 'User'}
-Email: ${user?.email || 'user@example.com'}
+      // Parse the response as JSON
+      const data = await response.json();
 
-EXPERIENCE
-Software Engineer at Example Corp (2020-Present)
-- Developed and maintained web applications using React and Node.js
-- Collaborated with cross-functional teams to deliver high-quality products
+      // Make sure we have text data
+      if (!data.text) {
+        throw new Error('No text was extracted from the PDF');
+      }
 
-EDUCATION
-Bachelor of Science in Computer Science
-University of Example (2016-2020)
-
-SKILLS
-JavaScript, TypeScript, React, Node.js, Firebase, Git`;
-
-        setResumeData(extractedText);
-        setIsUploading(false);
-        toast.success('Text extracted successfully');
-      }, 2000);
-    } catch (error) {
-      console.error('Error uploading file:', error);
-      toast.error('Failed to extract text from PDF');
+      // Set the raw text directly from the PDF without any modifications
+      setResumeData(data.text);
+      toast.success('Text extracted successfully from PDF');
+    } catch (error: any) {
+      console.error('Error extracting text from PDF:', error);
+      toast.error(error.message || 'Failed to extract text from PDF');
+    } finally {
       setIsUploading(false);
     }
   };
@@ -152,13 +150,23 @@ JavaScript, TypeScript, React, Node.js, Firebase, Git`;
               </p>
 
               <div className="flex flex-col space-y-4">
-                <textarea
-                  value={resumeData}
-                  onChange={(e) => setResumeData(e.target.value)}
-                  placeholder="Enter your resume information here, including your name, contact details, social links, work experience, education, skills, and any other relevant information. Try to add as much information as possible for better results..."
-                  className="w-full h-96 text-sm bg-zinc-900/90 border border-orange-500/30 border-dashed rounded-md p-4 text-white placeholder:text-white/40 focus:outline-none focus:border-orange-500/50 resize-none"
-                  disabled={isLoading || isUploading}
-                />
+                <div className="relative">
+                  <textarea
+                    value={resumeData}
+                    onChange={(e) => setResumeData(e.target.value)}
+                    placeholder="Enter your resume information here, including your name, contact details, social links, work experience, education, skills, and any other relevant information. Try to add as much information as possible for better results..."
+                    className="w-full h-96 text-sm bg-zinc-900/90 border border-orange-500/30 border-dashed rounded-md p-4 text-white placeholder:text-white/40 focus:outline-none focus:border-orange-500/50 resize-none"
+                    disabled={isLoading || isUploading}
+                  />
+                  {isUploading && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-zinc-900/70 backdrop-blur-sm rounded-md">
+                      <div className="flex flex-col items-center">
+                        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-white mb-3"></div>
+                        <p className="text-white text-sm">Extracting text from PDF...</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
 
                 <div className="flex flex-col sm:flex-row gap-4 justify-end">
                   <div className="relative">
@@ -175,8 +183,17 @@ JavaScript, TypeScript, React, Node.js, Firebase, Git`;
                       className="w-full sm:w-auto border-white/20 bg-zinc-900/80 hover:bg-zinc-800 hover:border-white/40 transition-all duration-200 flex items-center gap-2 text-white"
                       disabled={isLoading || isUploading}
                     >
-                      <UploadIcon className="h-4 w-4" />
-                      Upload Resume PDF
+                      {isUploading ? (
+                        <>
+                          <div className="animate-spin h-4 w-4 border-2 border-white rounded-full border-t-transparent" />
+                          Extracting...
+                        </>
+                      ) : (
+                        <>
+                          <UploadIcon className="h-4 w-4" />
+                          Upload Resume PDF
+                        </>
+                      )}
                     </Button>
                   </div>
 

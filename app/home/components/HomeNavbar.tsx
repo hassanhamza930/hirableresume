@@ -132,7 +132,7 @@ const HomeNavbar: React.FC = () => {
             <DropdownMenuSeparator className="bg-white/20" />
             <DropdownMenuItem
               className="cursor-pointer hover:bg-white/10 focus:bg-white/10"
-              onClick={() => toast.info('Profile settings coming soon!')}
+              onClick={() => router.push('/home/profile')}
             >
               <FiUser className="mr-2 h-4 w-4" />
               <span>Profile</span>
@@ -188,6 +188,19 @@ const HomeNavbar: React.FC = () => {
               <span className="text-black font-medium">Credits:</span>
               <span className="text-black font-bold">{userCredits !== null ? userCredits : '...'}</span>
             </div>
+
+            {/* Profile option */}
+            <NavOption
+              onClick={() => {
+                setIsMenuOpen(false);
+                router.push('/home/profile');
+              }}
+            >
+              <FiUser className="mr-2 h-4 w-4 inline" />
+              Profile
+            </NavOption>
+
+            {/* Sign out option */}
             <NavOption
               className="text-red-400 hover:text-red-300"
               onClick={() => {
@@ -195,6 +208,7 @@ const HomeNavbar: React.FC = () => {
                 handleSignOut();
               }}
             >
+              <FiLogOut className="mr-2 h-4 w-4 inline" />
               Sign Out
             </NavOption>
 
