@@ -59,7 +59,7 @@ const CreateResumeModal: React.FC<CreateResumeModalProps> = ({
               placeholder="Paste the job description here to tailor your resume..."
               value={jobDescription}
               onChange={(e) => setJobDescription(e.target.value)}
-              className="bg-zinc-900 border-white/10 text-white min-h-[250px]"
+              className="bg-zinc-900 border-white/10 text-white h-[250px] max-h-[250px] overflow-y-auto resize-none"
             />
             <p className="text-xs text-white/60">
               We'll use this information to tailor your resume for this specific job.

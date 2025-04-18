@@ -83,16 +83,18 @@ const ResumeEditorComponent: React.FC = () => {
   };
 
   // Handle updating resume content
-  const handleUpdateResume = async (content: string) => {
+  const handleUpdateResume = async (userRequest: string) => {
     if (selectedResumeId) {
       toast.loading('Updating resume...', { id: 'update-resume' });
-      const success = await updateResume(selectedResumeId, content);
+      const success = await updateResume(selectedResumeId, userRequest);
 
       if (success) {
         toast.success('Resume updated successfully!', { id: 'update-resume' });
       } else {
         toast.error('Failed to update resume', { id: 'update-resume' });
       }
+    } else {
+      toast.error('No resume selected');
     }
   };
 
@@ -118,6 +120,7 @@ const ResumeEditorComponent: React.FC = () => {
               {/* Resume Editor */}
               <ResumeEditor
                 onUpdateResume={handleUpdateResume}
+                isLoading={isLoading}
               />
             </>
           ) : (

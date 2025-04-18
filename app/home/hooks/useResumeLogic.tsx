@@ -17,7 +17,7 @@ export default function useResumeLogic({ userId }: UseResumeLogicProps = {}) {
   const [isLoading, setIsLoading] = useState(false);
   const { userData } = useUserStore();
   const { user } = useAuth();
-  const { selectResume, updateResume: updateResumeInStore } = useResumeStore();
+  const { selectResume } = useResumeStore();
 
   // Get the actual user ID (from props or from auth)
   const actualUserId = userId || user?.uid;
@@ -182,12 +182,12 @@ export default function useResumeLogic({ userId }: UseResumeLogicProps = {}) {
   };
 
   /**
-   * Updates an existing resume
+   * Updates an existing resume based on user request
    * @param resumeId The ID of the resume to update
-   * @param content The new content for the resume
+   * @param userRequest The user's request for updating the resume
    * @returns A boolean indicating whether the update was successful
    */
-  const updateResume = async (resumeId: string, content: string): Promise<boolean> => {
+  const updateResume = async (resumeId: string, userRequest: string): Promise<boolean> => {
     if (!actualUserId) {
       toast.error('You must be logged in to update a resume');
       return false;
@@ -196,12 +196,31 @@ export default function useResumeLogic({ userId }: UseResumeLogicProps = {}) {
     setIsLoading(true);
 
     try {
+      // Find the resume in the store to get its current content and job description
+      const resume = useResumeStore.getState().resumes.find(r => r.id === resumeId);
+
+      if (!resume) {
+        throw new Error('Resume not found in store');
+      }
+
+      // Generate updated content based on the user's request
+      let updatedContent = resume.content;
+
+      // If the user provided a request, use AI to update the content
+      if (userRequest.trim()) {
+        // Use the existing resume content and the user's request to generate new content
+        const aiUpdatedContent = await generateUpdatedContent(resume.content, userRequest);
+        if (aiUpdatedContent) {
+          updatedContent = aiUpdatedContent;
+        } else {
+          throw new Error('Failed to generate updated resume content');
+        }
+      }
+
+      // Update the resume in Firebase
       const db = getFirestore();
       const resumesCollection = collection(db, 'resumes');
 
-      // We don't need to find the resume in the store anymore
-
-      // Update the resume in Firebase
       // We need to query for the document ID since we're storing our own ID in the document
       const resumeQuery = query(resumesCollection, where('id', '==', resumeId), limit(1));
       const querySnapshot = await getDocs(resumeQuery);
@@ -213,24 +232,63 @@ export default function useResumeLogic({ userId }: UseResumeLogicProps = {}) {
       const resumeDocRef = querySnapshot.docs[0].ref;
 
       await updateDoc(resumeDocRef, {
-        content,
+        content: updatedContent,
         updatedAt: serverTimestamp()
       });
 
-      // Update the resume in the store
-      updateResumeInStore(resumeId, {
-        content,
-        updatedAt: new Date()
-      });
+      // The onSnapshot listener will automatically update the store
 
-      toast.success('Resume updated successfully');
       return true;
     } catch (error) {
       console.error('Error updating resume:', error);
-      toast.error('Failed to update resume');
+      toast.error('Failed to update resume: ' + (error instanceof Error ? error.message : 'Unknown error'));
       return false;
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  /**
+   * Generates updated resume content based on the user's request
+   * @param currentContent The current HTML content of the resume
+   * @param userRequest The user's request for updating the resume
+   * @returns The updated resume content in HTML format
+   */
+  const generateUpdatedContent = async (currentContent: string, userRequest: string): Promise<string | null> => {
+    try {
+      const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer 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`,
+          'HTTP-Referer': 'https://hirableresume.com',
+          'X-Title': 'HirableResume'
+        },
+        body: JSON.stringify({
+          model: 'anthropic/claude-3.7-sonnet',
+          messages: [
+            {
+              role: 'system',
+              content: SYSTEM_PROMPT
+            },
+            {
+              role: 'user',
+              content: `Here is my current resume in HTML format:\n\n${currentContent}\n\nPlease update it based on this request: ${userRequest}. Reply with entire updated HTML of the entire page and not just updated section`
+            }
+          ],
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error?.message || 'Failed to generate updated resume content');
+      }
+
+      return data.choices[0]?.message?.content || null;
+    } catch (error) {
+      console.error('Error generating updated resume content:', error);
+      return null;
     }
   };
 

@@ -155,7 +155,7 @@ export default function ProfilePage() {
                     value={resumeData}
                     onChange={(e) => setResumeData(e.target.value)}
                     placeholder="Enter your resume information here, including your name, contact details, social links, work experience, education, skills, and any other relevant information. Try to add as much information as possible for better results..."
-                    className="w-full h-96 text-sm bg-zinc-900/90 border border-orange-500/30 border-dashed rounded-md p-4 text-white placeholder:text-white/40 focus:outline-none focus:border-orange-500/50 resize-none"
+                    className="w-full h-96 text-sm bg-zinc-900/90 border border-yellow-500/30 border-dashed rounded-md p-4 text-white placeholder:text-white/40 focus:outline-none focus:border-yellow-500/50 resize-none"
                     disabled={isLoading || isUploading}
                   />
                   {isUploading && (

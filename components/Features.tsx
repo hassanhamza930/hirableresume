@@ -77,7 +77,7 @@ const keyFeatures: KeyFeature[] = [
     title: "Multiple Formats",
     description: "Download your resume in various formats including PDF, DOCX, and TXT to meet any application requirement.",
     icon: <MdOutlineFileDownload className="h-6 w-6 md:h-8 md:w-8 text-white" />,
-    borderColor: "from-amber-500 to-orange-500",
+    borderColor: "from-amber-500 to-yellow-500",
     spotlightColor: "rgba(251, 191, 36, 0.15)",
   },
   {
