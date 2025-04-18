@@ -10,31 +10,30 @@ import { Loader2 } from 'lucide-react';
 interface CreateResumeModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onCreateResume: (jobDescription: string) => void;
+  onCreateResume: (jobDescription: string) => Promise<void>;
+  isLoading?: boolean;
 }
 
 const CreateResumeModal: React.FC<CreateResumeModalProps> = ({
   isOpen,
   onClose,
-  onCreateResume
+  onCreateResume,
+  isLoading = false
 }) => {
   const [jobDescription, setJobDescription] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!jobDescription.trim()) {
       return;
     }
 
-    setIsLoading(true);
-
-    // In a real implementation, this would call the API to create a new resume
-    setTimeout(() => {
-      onCreateResume(jobDescription);
-      setIsLoading(false);
+    try {
+      await onCreateResume(jobDescription);
       resetForm();
       onClose();
-    }, 1000);
+    } catch (error) {
+      console.error('Error creating resume:', error);
+    }
   };
 
   const resetForm = () => {

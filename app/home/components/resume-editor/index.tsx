@@ -7,10 +7,12 @@ import ResumeEditor from './ResumeEditor';
 import CreateResumeModal from './CreateResumeModal';
 import { PLACEHOLDER_RESUMES } from './types';
 import { toast } from 'sonner';
+import useResumeLogic from '../../hooks/useResumeLogic';
 
 const ResumeEditorComponent: React.FC = () => {
   const [selectedResumeId, setSelectedResumeId] = useState<string>(PLACEHOLDER_RESUMES[0].id);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const { createResume, isLoading } = useResumeLogic();
 
   // Find the currently selected resume
   const selectedResume = PLACEHOLDER_RESUMES.find(resume => resume.id === selectedResumeId);
@@ -26,10 +28,19 @@ const ResumeEditorComponent: React.FC = () => {
   };
 
   // Handle creating a new resume with job description
-  const handleCreateNewResume = (jobDescription: string) => {
-    // In a real implementation, this would create a new resume in the database
-    toast.success('Creating resume based on job description');
-    console.log('Job Description:', jobDescription);
+  const handleCreateNewResume = async (jobDescription: string) => {
+    // Create a new resume using the useResumeLogic hook
+    toast.loading('Creating your tailored resume...', { id: 'create-resume' });
+
+    const newResume = await createResume(jobDescription);
+
+    if (newResume) {
+      toast.success('Resume created successfully!', { id: 'create-resume' });
+      // In a real implementation, we would select the newly created resume
+      // setSelectedResumeId(newResume.id);
+    } else {
+      toast.error('Failed to create resume', { id: 'create-resume' });
+    }
   };
 
   // Handle selecting a resume
@@ -105,6 +116,7 @@ const ResumeEditorComponent: React.FC = () => {
         isOpen={isCreateModalOpen}
         onClose={handleCloseModal}
         onCreateResume={handleCreateNewResume}
+        isLoading={isLoading}
       />
     </>
   );
