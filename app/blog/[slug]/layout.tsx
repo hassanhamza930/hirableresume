@@ -1,4 +1,4 @@
-import ServerNavbar from "@/components/server/Navbar";
+import Navbar from "@/components/Navbar";
 
 export default function BlogPostLayout({
   children,
@@ -7,7 +7,7 @@ export default function BlogPostLayout({
 }>) {
   return (
     <div className="relative z-0 w-full flex flex-col justify-start items-center overflow-x-hidden pb-36">
-      <ServerNavbar />
+      <Navbar />
       {children}
     </div>
   );
