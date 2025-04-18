@@ -13,22 +13,33 @@ interface ResumeItemProps {
 
 const ResumeItem: React.FC<ResumeItemProps> = ({ resume, isSelected, onSelect }) => {
   return (
-    <div 
+    <div
       onClick={() => onSelect(resume.id)}
       className="cursor-pointer"
     >
       <SpotlightCard
         className={cn(
-          "mb-3 p-3 transition-all duration-300 hover:border-white/30",
-          isSelected ? "border-white/30" : "border-white/10"
+          "mb-3 p-3 transition-all duration-300",
+          isSelected
+            ? "border-orange-500/50 bg-zinc-900/80 shadow-[0_0_10px_rgba(249,115,22,0.2)]"
+            : "border-white/10 hover:border-white/30"
         )}
-        spotlightColor="rgba(255, 255, 255, 0.1)"
+        spotlightColor={isSelected ? "rgba(249, 115, 22, 0.1)" : "rgba(255, 255, 255, 0.1)"}
       >
         <div className="flex flex-col">
-          <h3 className="text-white font-medium text-sm" style={{ fontFamily: "Geist" }}>
+          <h3
+            className={cn(
+              "font-medium text-sm",
+              isSelected ? "text-orange-400" : "text-white"
+            )}
+            style={{ fontFamily: "Geist" }}
+          >
             {resume.name}
           </h3>
-          <span className="text-white/60 text-xs mt-1">
+          <span className={cn(
+            "text-xs mt-1",
+            isSelected ? "text-orange-400/70" : "text-white/60"
+          )}>
             {formatDate(resume.createdAt)}
           </span>
         </div>

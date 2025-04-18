@@ -9,16 +9,16 @@ interface ResumeEditorProps {
 
 const ResumeEditor: React.FC<ResumeEditorProps> = ({ onUpdateResume }) => {
   const [editContent, setEditContent] = useState<string>('');
-  
+
   const handleSubmit = () => {
     if (editContent.trim()) {
       onUpdateResume(editContent);
       setEditContent('');
     }
   };
-  
+
   return (
-    <div className="p-6 border-t border-white/10 bg-zinc-950/80">
+    <div className="p-6 border-t border-white/10 bg-zinc-950/90 backdrop-blur-xl sticky bottom-0 z-10">
       <h3 className="text-white text-sm font-medium mb-2" style={{ fontFamily: "Geist" }}>
         Customize Your Resume
       </h3>
@@ -33,7 +33,7 @@ const ResumeEditor: React.FC<ResumeEditorProps> = ({ onUpdateResume }) => {
           <Button
             onClick={handleSubmit}
             disabled={!editContent.trim()}
-            className="flex items-center gap-1"
+            className="flex items-center gap-1 text-white"
           >
             Update Resume
           </Button>

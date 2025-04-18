@@ -14,30 +14,34 @@ interface ResumeListProps {
   onCreateResume: () => void;
 }
 
-const ResumeList: React.FC<ResumeListProps> = ({ 
-  resumes, 
-  selectedResumeId, 
-  onSelectResume, 
-  onCreateResume 
+const ResumeList: React.FC<ResumeListProps> = ({
+  resumes,
+  selectedResumeId,
+  onSelectResume,
+  onCreateResume
 }) => {
   return (
-    <div className="w-full md:w-[350px] h-full border-r border-white/10 overflow-y-auto">
+    <div className="w-full md:w-[350px] h-full border-r border-white/10 flex flex-col">
+      {/* Fixed header with title and Create New Resume button */}
       <div className="p-4 sticky top-0 bg-zinc-950/90 backdrop-blur-xl z-10">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-white text-lg font-semibold" style={{ fontFamily: "Geist" }}>Your Resumes</h2>
-          <Button 
-            onClick={onCreateResume}
-            className="flex items-center gap-1"
-            size="sm"
-          >
-            <PlusIcon className="h-4 w-4" />
-            <span>New</span>
-          </Button>
         </div>
+
+        {/* Full-width Create New Resume button */}
+        <Button
+          onClick={onCreateResume}
+          className="w-full shadow-md"
+        >
+          <PlusIcon className="h-5 w-5" />
+          <span className="font-medium">Create New Resume</span>
+        </Button>
+
         <Separator className="bg-white/10" />
       </div>
-      
-      <div className="p-4">
+
+      {/* Scrollable resume list */}
+      <div className="p-4 flex flex-col overflow-y-auto">
         {resumes.map((resume) => (
           <ResumeItem
             key={resume.id}
