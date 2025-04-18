@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import ResumeList from './ResumeList';
 import ResumePreview from './ResumePreview';
 import ResumeEditor from './ResumeEditBottomInput';
@@ -13,6 +14,7 @@ const ResumeEditorComponent: React.FC = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const { createResume, updateResume, isLoading } = useResumeLogic();
   const { resumes, selectedResumeId } = useResumeStore();
+  const router = useRouter();
 
   // Find the currently selected resume
   const selectedResume = resumes.find(resume => resume.id === selectedResumeId);
@@ -59,26 +61,21 @@ const ResumeEditorComponent: React.FC = () => {
     }
   };
 
-  // Handle downloading resume
+  // Handle downloading resume as PDF
   const handleDownload = () => {
-    if (selectedResume) {
+    if (selectedResume && selectedResumeId) {
       try {
-        const fileName = `${selectedResume.name.replace('@', '-')}.html`;
-        const blob = new Blob([selectedResume.content], { type: 'text/html' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = fileName;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
+        // First navigate to the print route with just the resume ID
+        router.push(`/print?id=${selectedResumeId}`);
 
-        toast.success(`Downloaded ${fileName} successfully!`);
+        
+       
       } catch (error) {
-        console.error('Error downloading resume:', error);
-        toast.error('Failed to download resume');
+        console.error('Error preparing PDF download:', error);
+        toast.error('Failed to prepare PDF download');
       }
+    } else {
+      toast.error('No resume selected');
     }
   };
 

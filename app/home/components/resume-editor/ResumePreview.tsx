@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { DownloadIcon, CopyIcon } from 'lucide-react';
+import { FileType, CopyIcon } from 'lucide-react';
 import SpotlightCard from '@/components/SpotLightCard';
 import { Resume } from './types';
 
@@ -44,8 +44,8 @@ const ResumePreview: React.FC<ResumePreviewProps> = ({
             variant="outline"
             className="flex items-center gap-1 border-white/20 bg-zinc-900/80 text-white hover:bg-zinc-800 hover:text-white transition-all duration-200"
           >
-            <DownloadIcon className="h-4 w-4" />
-            <span>Download</span>
+            <FileType className="h-4 w-4" />
+            <span>Download PDF</span>
           </Button>
         </div>
       </div>

@@ -33,6 +33,9 @@ export const LoggedInWrapper = ({ children }: LoggedInWrapperProps) => {
   useEffect(() => {
     if (!user) return;
 
+    // Set loading state to true when starting to fetch user data
+    setUserLoading(true);
+
     const db = getFirestore();
     const userRef = doc(db, 'users', user.uid);
 
@@ -45,14 +48,19 @@ export const LoggedInWrapper = ({ children }: LoggedInWrapperProps) => {
 
         // Check if user is onboarded
         // Don't redirect if already on the profile page or if onboarded is true
+        // Only redirect after data is fully loaded
         if (data.onboarded !== true && pathname !== '/home/profile') {
-          router.push('/home/profile');
-          toast.info('Please complete your profile to continue');
+          // Add a small delay to ensure data is fully processed
+          setTimeout(() => {
+            router.push('/home/profile');
+            toast.info('Please complete your profile to continue');
+          }, 100);
         }
       } else {
         console.error('No user document found for authenticated user');
         setUserData(null);
       }
+      // Mark loading as complete
       setUserLoading(false);
     }, (error) => {
       console.error('Error listening to user document:', error);
