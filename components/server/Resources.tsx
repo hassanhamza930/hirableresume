@@ -85,75 +85,77 @@ export default function ServerResources() {
           >
             <meta itemProp="datePublished" content={post.date} />
             <meta itemProp="author" content={post.author.name} />
-            <Link href={`/blog/${post.slug}`} className="block">
-              <div
-                className="relative w-full h-64 md:h-80 rounded-xl overflow-hidden group transition-all duration-300 hover:shadow-lg hover:shadow-white/10"
-              >
-                {/* Thumbnail */}
-                <img
-                  src={post.thumbnail}
-                  alt={`Thumbnail for ${post.title}`}
-                  className="absolute inset-0 w-full h-full object-cover z-0"
-                  itemProp="image"
-                />
 
-                {/* Overlay */}
-                <div className="absolute inset-0 bg-black/60 backdrop-blur-xl z-10 transition-all duration-300 group-hover:bg-black/50" />
+            <div className="relative w-full h-64 md:h-80 rounded-xl overflow-hidden group transition-all duration-300 hover:shadow-lg hover:shadow-white/10">
+              {/* Thumbnail */}
+              <img
+                src={post.thumbnail}
+                alt={`Thumbnail for ${post.title}`}
+                className="absolute inset-0 w-full h-full object-cover z-0"
+                itemProp="image"
+              />
 
-                {/* Content */}
-                <div className="absolute inset-0 z-20 flex flex-col justify-center items-center p-6 text-center">
-                  <h3
-                    style={{ fontFamily: "Special Gothic Expanded One" }}
-                    className="text-lg md:text-xl text-white mb-3"
-                    itemProp="headline"
-                  >
-                    {post.title}
-                  </h3>
+              {/* Overlay */}
+              <div className="absolute inset-0 bg-black/60 backdrop-blur-xl z-10 transition-all duration-300 group-hover:bg-black/50" />
 
-                  <p
-                    style={{ fontFamily: "Geist Mono" }}
-                    className="text-white/80 text-xs md:text-sm mb-4 line-clamp-3"
-                    itemProp="abstract"
-                  >
-                    {post.description}
-                  </p>
+              {/* Content */}
+              <div className="absolute inset-0 z-20 flex flex-col justify-center items-center p-6 text-center">
+                <h3
+                  style={{ fontFamily: "Special Gothic Expanded One" }}
+                  className="text-lg md:text-xl text-white mb-3"
+                  itemProp="headline"
+                >
+                  {post.title}
+                </h3>
 
-                  <div className="flex items-center gap-2 mb-4">
-                    <img
-                      src={post.author.avatar}
-                      alt={post.author.name}
-                      className="w-6 h-6 rounded-full border border-white/20"
-                    />
-                    {post.author.channel ? (
-                      <a
-                        href={post.author.channel}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{ fontFamily: "Geist" }}
-                        className="text-white/70 hover:text-white text-xs"
-                      >
-                        {post.author.name}
-                      </a>
-                    ) : (
-                      <span style={{ fontFamily: "Geist" }} className="text-white/70 text-xs">
-                        {post.author.name}
-                      </span>
-                    )}
-                    <span className="text-white/50 text-xs">•</span>
-                    <time style={{ fontFamily: "Geist Mono" }} className="text-white/70 text-xs">
-                      {post.date}
-                    </time>
-                  </div>
+                <p
+                  style={{ fontFamily: "Geist Mono" }}
+                  className="text-white/80 text-xs md:text-sm mb-4 line-clamp-3"
+                  itemProp="abstract"
+                >
+                  {post.description}
+                </p>
 
+                <div className="flex items-center gap-2 mb-4">
+                  <img
+                    src={post.author.avatar}
+                    alt={post.author.name}
+                    className="w-6 h-6 rounded-full border border-white/20"
+                  />
+                  {post.author.channel ? (
+                    <Link
+                      href={post.author.channel}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ fontFamily: "Geist", position: "relative", zIndex: 40 }}
+                      className="text-white/70 hover:text-white text-xs"
+                    >
+                      {post.author.name}
+                    </Link>
+                  ) : (
+                    <span style={{ fontFamily: "Geist" }} className="text-white/70 text-xs">
+                      {post.author.name}
+                    </span>
+                  )}
+                  <span className="text-white/50 text-xs">•</span>
+                  <time style={{ fontFamily: "Geist Mono" }} className="text-white/70 text-xs">
+                    {post.date}
+                  </time>
+                </div>
+
+                <Link href={`/blog/${post.slug}`} passHref style={{ position: "relative", zIndex: 40 }}>
                   <Button
                     variant="outline"
-                    className="text-white border-white/20 hover:bg-white/10 text-xs"
+                    className="text-white border-white/20 hover:bg-white/10 text-xs relative z-40"
                   >
                     Read Article
                   </Button>
-                </div>
+                </Link>
               </div>
-            </Link>
+
+              {/* Make the entire card clickable with a Link overlay */}
+              <Link href={`/blog/${post.slug}`} className="absolute inset-0 z-30 cursor-pointer" aria-label={`Read ${post.title}`} />
+            </div>
           </article>
         ))}
       </div>
