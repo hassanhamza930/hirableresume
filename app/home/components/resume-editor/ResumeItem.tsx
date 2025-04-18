@@ -17,33 +17,23 @@ const ResumeItem: React.FC<ResumeItemProps> = ({ resume, isSelected, onSelect })
       onClick={() => onSelect(resume.id)}
       className="cursor-pointer"
     >
-      <SpotlightCard
-        className={cn(
-          "mb-3 p-3 transition-all duration-300",
-          isSelected
-            ? "border-yellow-500/50 bg-zinc-900/80 shadow-[0_0_10px_rgba(234,179,8,0.2)]"
-            : "border-white/10 hover:border-white/30"
-        )}
-        spotlightColor={isSelected ? "rgba(234, 179, 8, 0.1)" : "rgba(255, 255, 255, 0.1)"}
-      >
-        <div className="flex flex-col">
-          <h3
-            className={cn(
-              "font-medium text-sm",
-              isSelected ? "text-yellow-400" : "text-white"
-            )}
-            style={{ fontFamily: "Geist" }}
-          >
-            {resume.name}
-          </h3>
-          <span className={cn(
-            "text-xs mt-1",
-            isSelected ? "text-yellow-400/70" : "text-white/60"
-          )}>
-            {formatDate(resume.createdAt)}
-          </span>
-        </div>
-      </SpotlightCard>
+      <div className={`flex flex-col border-2 hover:bg-yellow-400/10 ${isSelected == true ? "border-yellow-400/40" : "border-yellow-400/0"} border-dashed mb-3 p-3 transition-all duration-300 rounded-lg`}>
+        <h3
+          className={cn(
+            "font-medium text-sm",
+            isSelected ? "text-yellow-400" : "text-white"
+          )}
+          style={{ fontFamily: "Geist" }}
+        >
+          {resume.name}
+        </h3>
+        <span className={cn(
+          "text-xs mt-1",
+          isSelected ? "text-yellow-400/70" : "text-white/60"
+        )}>
+          {formatDate(resume.createdAt)}
+        </span>
+      </div>
     </div>
   );
 };
