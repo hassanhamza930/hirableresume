@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { useUserStore } from '@/app/store/userStore';
 import { useResumeStore } from '@/app/store/resumeStore';
-import { Resume } from '@/app/interfaces';
 import { useAuth } from '@/app/hooks/useAuth';
 import { SYSTEM_PROMPT } from '@/app/prompts';
 import { v4 as uuidv4 } from 'uuid';
@@ -18,7 +17,7 @@ export default function useResumeLogic({ userId }: UseResumeLogicProps = {}) {
   const [isLoading, setIsLoading] = useState(false);
   const { userData } = useUserStore();
   const { user } = useAuth();
-  const { addResume, updateResume: updateResumeInStore } = useResumeStore();
+  const { selectResume, updateResume: updateResumeInStore } = useResumeStore();
 
   // Get the actual user ID (from props or from auth)
   const actualUserId = userId || user?.uid;
@@ -69,12 +68,12 @@ export default function useResumeLogic({ userId }: UseResumeLogicProps = {}) {
       // Add the resume to the resumes collection
       await addDoc(collection(db, 'resumes'), resumeData);
 
-      // Add the resume to the store with JavaScript Date objects
-      addResume({
-        ...resumeData,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      } as Resume);
+      // The Firestore document will be picked up by the onSnapshot listener in ResumeList
+      // We don't need to manually add it to the store here, as it will be added by the listener
+      // with the proper firebaseId
+
+      // Select the newly created resume
+      selectResume(resumeId);
 
       toast.success('Resume created successfully');
       return resumeData;

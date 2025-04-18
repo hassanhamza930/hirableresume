@@ -2,6 +2,7 @@
 
 export interface Resume {
   id: string;
+  firebaseId?: string; // Firestore document ID for unique React keys
   name: string;
   createdAt: Date;
   updatedAt: Date;

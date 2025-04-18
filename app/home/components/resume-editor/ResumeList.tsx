@@ -40,9 +40,13 @@ const ResumeList: React.FC<ResumeListProps> = ({
 
       snapshot.forEach((doc) => {
         const data = doc.data();
+        // Use the Firestore document ID as the unique identifier
+        const firebaseId = doc.id;
         resumeList.push({
           ...data,
-          id: data.id || doc.id,
+          // Use the Firestore document ID for the key, but keep the custom ID for internal references
+          firebaseId,
+          id: data.id, // Keep the original ID for references
           createdAt: data.createdAt?.toDate() || new Date(),
           updatedAt: data.updatedAt?.toDate() || new Date(),
         } as Resume);
@@ -85,7 +89,7 @@ const ResumeList: React.FC<ResumeListProps> = ({
       <div className="p-4 flex flex-col flex-1 overflow-hidden">
         {resumes.map((resume) => (
           <ResumeItem
-            key={resume.id}
+            key={resume.firebaseId || resume.id}
             resume={resume}
             isSelected={selectedResumeId === resume.id}
             onSelect={handleSelectResume}

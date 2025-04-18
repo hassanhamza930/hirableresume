@@ -48,23 +48,37 @@ const ResumeEditorComponent: React.FC = () => {
   // Handle copying resume HTML
   const handleCopyHTML = () => {
     if (selectedResume) {
-      navigator.clipboard.writeText(selectedResume.content);
-      alert('Resume HTML copied to clipboard!');
+      navigator.clipboard.writeText(selectedResume.content)
+        .then(() => {
+          toast.success('Resume HTML copied to clipboard!');
+        })
+        .catch((error) => {
+          console.error('Error copying to clipboard:', error);
+          toast.error('Failed to copy HTML to clipboard');
+        });
     }
   };
 
   // Handle downloading resume
   const handleDownload = () => {
     if (selectedResume) {
-      const blob = new Blob([selectedResume.content], { type: 'text/html' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${selectedResume.name.replace('@', '-')}.html`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
+      try {
+        const fileName = `${selectedResume.name.replace('@', '-')}.html`;
+        const blob = new Blob([selectedResume.content], { type: 'text/html' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        toast.success(`Downloaded ${fileName} successfully!`);
+      } catch (error) {
+        console.error('Error downloading resume:', error);
+        toast.error('Failed to download resume');
+      }
     }
   };
 

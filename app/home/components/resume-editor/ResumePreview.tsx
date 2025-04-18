@@ -26,19 +26,23 @@ const ResumePreview: React.FC<ResumePreviewProps> = ({
         </h2>
         <div className="flex gap-2">
           <Button
-            onClick={onCopyHTML}
+            onClick={(e) => {
+              onCopyHTML();
+            }}
             size="sm"
             variant="outline"
-            className="flex items-center gap-1 border-white/20 bg-zinc-900/80 text-white hover:bg-zinc-800 hover:text-white"
+            className="flex items-center gap-1 border-white/20 bg-zinc-900/80 text-white hover:bg-zinc-800 hover:text-white transition-all duration-200"
           >
             <CopyIcon className="h-4 w-4" />
             <span>Copy HTML</span>
           </Button>
           <Button
-            onClick={onDownload}
+            onClick={(e) => {
+              onDownload();
+            }}
             size="sm"
             variant="outline"
-            className="flex items-center gap-1 border-white/20 bg-zinc-900/80 text-white hover:bg-zinc-800 hover:text-white"
+            className="flex items-center gap-1 border-white/20 bg-zinc-900/80 text-white hover:bg-zinc-800 hover:text-white transition-all duration-200"
           >
             <DownloadIcon className="h-4 w-4" />
             <span>Download</span>
