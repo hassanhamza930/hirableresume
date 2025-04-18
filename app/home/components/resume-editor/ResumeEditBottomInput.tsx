@@ -18,7 +18,7 @@ const ResumeEditor: React.FC<ResumeEditorProps> = ({ onUpdateResume }) => {
   };
 
   return (
-    <div className="p-6 border-t border-white/10 bg-zinc-950/90 backdrop-blur-xl sticky bottom-0 z-10">
+    <div className="p-6 border-t border-white/10 bg-zinc-950/90 backdrop-blur-xl">
       <h3 className="text-white text-sm font-medium mb-2" style={{ fontFamily: "Geist" }}>
         Customize Your Resume
       </h3>

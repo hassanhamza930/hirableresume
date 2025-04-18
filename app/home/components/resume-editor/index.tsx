@@ -3,19 +3,19 @@
 import React, { useState } from 'react';
 import ResumeList from './ResumeList';
 import ResumePreview from './ResumePreview';
-import ResumeEditor from './ResumeEditor';
+import ResumeEditor from './ResumeEditBottomInput';
 import CreateResumeModal from './CreateResumeModal';
-import { PLACEHOLDER_RESUMES } from './types';
 import { toast } from 'sonner';
 import useResumeLogic from '../../hooks/useResumeLogic';
+import { useResumeStore } from '@/app/store/resumeStore';
 
 const ResumeEditorComponent: React.FC = () => {
-  const [selectedResumeId, setSelectedResumeId] = useState<string>(PLACEHOLDER_RESUMES[0].id);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const { createResume, isLoading } = useResumeLogic();
+  const { createResume, updateResume, isLoading } = useResumeLogic();
+  const { resumes, selectedResumeId } = useResumeStore();
 
   // Find the currently selected resume
-  const selectedResume = PLACEHOLDER_RESUMES.find(resume => resume.id === selectedResumeId);
+  const selectedResume = resumes.find(resume => resume.id === selectedResumeId);
 
   // Handle opening the create resume modal
   const handleCreateResume = () => {
@@ -43,10 +43,7 @@ const ResumeEditorComponent: React.FC = () => {
     }
   };
 
-  // Handle selecting a resume
-  const handleSelectResume = (id: string) => {
-    setSelectedResumeId(id);
-  };
+  // No need for handleSelectResume as it's now handled in the ResumeList component
 
   // Handle copying resume HTML
   const handleCopyHTML = () => {
@@ -72,23 +69,29 @@ const ResumeEditorComponent: React.FC = () => {
   };
 
   // Handle updating resume content
-  const handleUpdateResume = (content: string) => {
-    alert(`In a real implementation, this would update the resume with: ${content}`);
+  const handleUpdateResume = async (content: string) => {
+    if (selectedResumeId) {
+      toast.loading('Updating resume...', { id: 'update-resume' });
+      const success = await updateResume(selectedResumeId, content);
+
+      if (success) {
+        toast.success('Resume updated successfully!', { id: 'update-resume' });
+      } else {
+        toast.error('Failed to update resume', { id: 'update-resume' });
+      }
+    }
   };
 
   return (
     <>
-      <div className="flex flex-col md:flex-row w-full h-[calc(100vh-64px)] mt-16">
+      <div className="flex flex-col md:flex-row w-full h-[calc(100vh-64px)] mt-16 overflow-hidden">
         {/* Left Column - Resume List */}
         <ResumeList
-          resumes={PLACEHOLDER_RESUMES}
-          selectedResumeId={selectedResumeId}
-          onSelectResume={handleSelectResume}
           onCreateResume={handleCreateResume}
         />
 
         {/* Right Column - Resume Preview and Editor */}
-        <div className="flex-1 h-full flex flex-col">
+        <div className="flex-1 h-full flex flex-col overflow-hidden">
           {selectedResume ? (
             <>
               {/* Resume Preview */}

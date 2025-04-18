@@ -18,44 +18,42 @@ const ResumePreview: React.FC<ResumePreviewProps> = ({
   onDownload
 }) => {
   return (
-    <div className="flex-1 flex flex-col">
-      {/* Fixed header with title and buttons */}
-      <div className="p-6 pb-3 sticky top-0 bg-zinc-950/95 backdrop-blur-xl z-10">
-        <div className="flex items-center justify-between mb-2">
-          <h2 className="text-white text-xl font-semibold" style={{ fontFamily: "Geist" }}>
-            {resume.name}
-          </h2>
-          <div className="flex gap-2">
-            <Button
-              onClick={onCopyHTML}
-              size="sm"
-              variant="outline"
-              className="flex items-center gap-1 border-white/20 bg-zinc-900/80 text-white hover:bg-zinc-800 hover:text-white"
-            >
-              <CopyIcon className="h-4 w-4" />
-              <span>Copy HTML</span>
-            </Button>
-            <Button
-              onClick={onDownload}
-              size="sm"
-              variant="outline"
-              className="flex items-center gap-1 border-white/20 bg-zinc-900/80 text-white hover:bg-zinc-800 hover:text-white"
-            >
-              <DownloadIcon className="h-4 w-4" />
-              <span>Download</span>
-            </Button>
-          </div>
+    <div className="flex-1 flex flex-col p-6 overflow-hidden">
+      {/* Header with title and buttons */}
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-white text-md font-medium" style={{ fontFamily: "Geist" }}>
+          {resume.name}
+        </h2>
+        <div className="flex gap-2">
+          <Button
+            onClick={onCopyHTML}
+            size="sm"
+            variant="outline"
+            className="flex items-center gap-1 border-white/20 bg-zinc-900/80 text-white hover:bg-zinc-800 hover:text-white"
+          >
+            <CopyIcon className="h-4 w-4" />
+            <span>Copy HTML</span>
+          </Button>
+          <Button
+            onClick={onDownload}
+            size="sm"
+            variant="outline"
+            className="flex items-center gap-1 border-white/20 bg-zinc-900/80 text-white hover:bg-zinc-800 hover:text-white"
+          >
+            <DownloadIcon className="h-4 w-4" />
+            <span>Download</span>
+          </Button>
         </div>
       </div>
 
-      {/* Scrollable resume content */}
-      <div className="px-6 pb-6 flex-1 overflow-y-auto">
+      {/* Scrollable resume content container */}
+      <div className="flex-1 min-h-0 overflow-hidden">
         <SpotlightCard
-          className="w-full border border-white/10 bg-zinc-950/80 backdrop-blur-xl p-6 min-h-[400px] max-h-[calc(100vh-300px)] overflow-y-auto"
+          className="w-full h-full border border-white/10 bg-white backdrop-blur-xl"
           spotlightColor="rgba(255, 255, 255, 0.05)"
         >
           <div
-            className="text-white"
+            className="bg-white text-zinc-950 p-10 h-full overflow-y-auto"
             dangerouslySetInnerHTML={{ __html: resume.content }}
           />
         </SpotlightCard>

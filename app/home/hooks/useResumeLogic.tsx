@@ -2,10 +2,12 @@
 
 import { useState } from 'react';
 import { useUserStore } from '@/app/store/userStore';
+import { useResumeStore } from '@/app/store/resumeStore';
+import { Resume } from '@/app/interfaces';
 import { useAuth } from '@/app/hooks/useAuth';
 import { SYSTEM_PROMPT } from '@/app/prompts';
 import { v4 as uuidv4 } from 'uuid';
-import { getFirestore, collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { getFirestore, collection, addDoc, serverTimestamp, updateDoc, query, where, limit, getDocs } from 'firebase/firestore';
 import { toast } from 'sonner';
 
 interface UseResumeLogicProps {
@@ -16,6 +18,7 @@ export default function useResumeLogic({ userId }: UseResumeLogicProps = {}) {
   const [isLoading, setIsLoading] = useState(false);
   const { userData } = useUserStore();
   const { user } = useAuth();
+  const { addResume, updateResume: updateResumeInStore } = useResumeStore();
 
   // Get the actual user ID (from props or from auth)
   const actualUserId = userId || user?.uid;
@@ -51,8 +54,9 @@ export default function useResumeLogic({ userId }: UseResumeLogicProps = {}) {
 
       // Create a new resume document in Firebase
       const db = getFirestore();
+      const resumeId = uuidv4();
       const resumeData = {
-        id: uuidv4(),
+        id: resumeId,
         name: resumeName,
         content: resumeContent,
         jobDescription,
@@ -64,6 +68,13 @@ export default function useResumeLogic({ userId }: UseResumeLogicProps = {}) {
 
       // Add the resume to the resumes collection
       await addDoc(collection(db, 'resumes'), resumeData);
+
+      // Add the resume to the store with JavaScript Date objects
+      addResume({
+        ...resumeData,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      } as Resume);
 
       toast.success('Resume created successfully');
       return resumeData;
@@ -155,7 +166,6 @@ export default function useResumeLogic({ userId }: UseResumeLogicProps = {}) {
               content: `Here is my resume information:\n\n${resumeData}\n\nHere is the job description I'm applying for:\n\n${jobDescription}\n\nPlease create a tailored resume for this job.`
             }
           ],
-          max_tokens: 4000
         })
       });
 
@@ -172,8 +182,62 @@ export default function useResumeLogic({ userId }: UseResumeLogicProps = {}) {
     }
   };
 
+  /**
+   * Updates an existing resume
+   * @param resumeId The ID of the resume to update
+   * @param content The new content for the resume
+   * @returns A boolean indicating whether the update was successful
+   */
+  const updateResume = async (resumeId: string, content: string): Promise<boolean> => {
+    if (!actualUserId) {
+      toast.error('You must be logged in to update a resume');
+      return false;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const db = getFirestore();
+      const resumesCollection = collection(db, 'resumes');
+
+      // We don't need to find the resume in the store anymore
+
+      // Update the resume in Firebase
+      // We need to query for the document ID since we're storing our own ID in the document
+      const resumeQuery = query(resumesCollection, where('id', '==', resumeId), limit(1));
+      const querySnapshot = await getDocs(resumeQuery);
+
+      if (querySnapshot.empty) {
+        throw new Error('Resume document not found in Firebase');
+      }
+
+      const resumeDocRef = querySnapshot.docs[0].ref;
+
+      await updateDoc(resumeDocRef, {
+        content,
+        updatedAt: serverTimestamp()
+      });
+
+      // Update the resume in the store
+      updateResumeInStore(resumeId, {
+        content,
+        updatedAt: new Date()
+      });
+
+      toast.success('Resume updated successfully');
+      return true;
+    } catch (error) {
+      console.error('Error updating resume:', error);
+      toast.error('Failed to update resume');
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return {
     createResume,
+    updateResume,
     generateResumeName,
     isLoading
   };

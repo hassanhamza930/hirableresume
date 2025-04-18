@@ -8,11 +8,13 @@ import ResumeEditorComponent from './components/resume-editor';
 export default function HomePage() {
   return (
     <LoggedInWrapper>
-      {/* Fixed navbar */}
-      <HomeNavbar />
+      <div className="h-screen overflow-hidden">
+        {/* Fixed navbar */}
+        <HomeNavbar />
 
-      {/* Resume Editor Component */}
-      <ResumeEditorComponent />
+        {/* Resume Editor Component */}
+        <ResumeEditorComponent />
+      </div>
     </LoggedInWrapper>
   );
 }
