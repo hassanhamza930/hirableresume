@@ -6,7 +6,9 @@ export interface UserData {
   createdAt: Date;
   lastLogin: Date;
   plan: 'free' | 'premium' | 'enterprise';
-  credits:number
+  credits: number;
+  onboarded?: boolean;
+  resumeData?: string; // User's resume data in natural language
 }
 
 export interface Resume {

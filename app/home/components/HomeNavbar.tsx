@@ -41,6 +41,9 @@ const HomeNavbar: React.FC = () => {
   // Check if we're on a page other than the main home page
   const isNotHomePage = pathname !== '/home';
 
+  // Check if user is on profile page and not onboarded yet
+  const isProfilePageNotOnboarded = pathname === '/home/profile' && userData?.onboarded !== true;
+
   // Get user credits from the Zustand store
   const userCredits = userData?.credits ?? null;
 
@@ -75,7 +78,7 @@ const HomeNavbar: React.FC = () => {
     >
       {/* Logo and back button */}
       <div className="flex items-center gap-2">
-        {isNotHomePage && (
+        {isNotHomePage && !isProfilePageNotOnboarded && (
           <Link
             href="/home"
             className="text-white/70 hover:text-white transition-all duration-300 mr-4"
@@ -162,8 +165,8 @@ const HomeNavbar: React.FC = () => {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
             className="fixed z-30 top-full left-0 right-0 flex flex-col justify-center items-start gap-y-4 py-4 px-10 text-black bg-gray-200 shdaow-xl shadow-white backdrop-blur-3xl border border-t-0 border-white/50 rounded-b-xl sm:hidden">
-            {/* Back to home option - only shown when not on home page */}
-            {isNotHomePage && (
+            {/* Back to home option - only shown when not on home page and not on profile page when not onboarded */}
+            {isNotHomePage && !isProfilePageNotOnboarded && (
               <NavOption
                 onClick={() => {
                   setIsMenuOpen(false);

@@ -96,7 +96,8 @@ export function useAuth() {
           createdAt: serverTimestamp() as unknown as Date,
           lastLogin: serverTimestamp() as unknown as Date,
           plan: 'free',
-          credits: 5
+          credits: 5,
+          onboarded: false // New users need to complete onboarding
         };
 
         await setDoc(userRef, userData);

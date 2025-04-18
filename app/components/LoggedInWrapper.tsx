@@ -1,7 +1,7 @@
 'use client';
 
 import React, { ReactNode, useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '../hooks/useAuth';
 import { toast } from 'sonner';
 import { getFirestore, doc, onSnapshot } from 'firebase/firestore';
@@ -14,6 +14,7 @@ interface LoggedInWrapperProps {
 
 export const LoggedInWrapper = ({ children }: LoggedInWrapperProps) => {
   const router = useRouter();
+  const pathname = usePathname();
   const [loading, setLoading] = useState(true);
   const { isAuthenticated, user } = useAuth();
   const { setUserData, setLoading: setUserLoading } = useUserStore();
@@ -39,7 +40,15 @@ export const LoggedInWrapper = ({ children }: LoggedInWrapperProps) => {
     const unsubscribe = onSnapshot(userRef, (docSnap) => {
       if (docSnap.exists()) {
         // Update the Zustand store with the latest user data
-        setUserData(docSnap.data());
+        const data = docSnap.data();
+        setUserData(data);
+
+        // Check if user is onboarded
+        // Don't redirect if already on the profile page or if onboarded is true
+        if (data.onboarded !== true && pathname !== '/home/profile') {
+          router.push('/home/profile');
+          toast.info('Please complete your profile to continue');
+        }
       } else {
         console.error('No user document found for authenticated user');
         setUserData(null);
@@ -53,14 +62,14 @@ export const LoggedInWrapper = ({ children }: LoggedInWrapperProps) => {
 
     // Clean up the listener when the component unmounts
     return () => unsubscribe();
-  }, [user, setUserData, setUserLoading]);
+  }, [user, setUserData, setUserLoading, router, pathname]);
 
   if (loading) {
     return (
-      <motion.div 
+      <motion.div
       initial
       className="flex items-center justify-center h-screen w-full">
-        <motion.img 
+        <motion.img
         animate={{
           scale:[1,1.2,1],
           rotate:[0,120,0]
