@@ -1,6 +1,37 @@
+# HirableResume robots.txt
+
 # Allow all crawlers
 User-agent: *
 Allow: /
 
-# Sitemap location
+# Disallow private or authentication-required pages
+Disallow: /home/
+Disallow: /print/
+Disallow: /api/
+Disallow: /basic
+Disallow: /premium
+
+# Allow specific bots with custom rules
+User-agent: Googlebot
+Allow: /
+Disallow: /home/
+Disallow: /print/
+Disallow: /api/
+Disallow: /basic
+Disallow: /premium
+
+User-agent: Bingbot
+Allow: /
+Disallow: /home/
+Disallow: /print/
+Disallow: /api/
+Disallow: /basic
+Disallow: /premium
+
+# Crawl delay for bots to reduce server load
+User-agent: *
+Crawl-delay: 10
+
+# Sitemap locations
 Sitemap: https://hirableresume.com/sitemap.xml
+Sitemap: https://hirableresume.com/api/sitemap
