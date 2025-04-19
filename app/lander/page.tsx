@@ -18,6 +18,20 @@ export default function LanderPage() {
         <Testimonials />
         <Pricing />
         <FAQs />
+
+        {/* Schema.org JSON-LD for Website */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              "name": "HirableResume",
+              "url": "https://hirableresume.com/lander",
+              "description": "Personalize your resume for each job description using AI to get your foot in the door and land more interviews."
+            })
+          }}
+        />
       </div>
     </LoggedOutWrapper>
   );

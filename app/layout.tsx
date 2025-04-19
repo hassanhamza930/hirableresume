@@ -2,11 +2,87 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { RootWrapper } from './components/RootWrapper';
 
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+};
+
 export const metadata: Metadata = {
-  title: "HirableResume",
-  description: "Personalize your resume for each job description to get your foot in the door.",
+  title: {
+    default: "HirableResume - AI-Powered Resume Builder",
+    template: "%s | HirableResume"
+  },
+  description: "Personalize your resume for each job description using AI to get your foot in the door and land more interviews.",
+  keywords: ["resume builder", "AI resume", "job application", "personalized resume", "ATS optimization", "job search", "career", "employment", "hiring", "job seeker"],
+  authors: [{ name: "HirableResume Team" }],
+  creator: "HirableResume",
+  publisher: "HirableResume",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  metadataBase: new URL('https://hirableresume.com'),
+  alternates: {
+    canonical: '/',
+    languages: {
+      'en-US': '/'
+    },
+  },
+  openGraph: {
+    title: "HirableResume - AI-Powered Resume Builder",
+    description: "Personalize your resume for each job description using AI to get your foot in the door and land more interviews.",
+    url: 'https://hirableresume.com',
+    siteName: 'HirableResume',
+    images: [
+      {
+        url: '/og.png',
+        width: 1200,
+        height: 630,
+        alt: 'HirableResume - AI-Powered Resume Builder',
+      },
+    ],
+    locale: 'en_US',
+    type: 'website',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'HirableResume - AI-Powered Resume Builder',
+    description: 'Personalize your resume for each job description using AI to get your foot in the door and land more interviews.',
+    images: ['/og.png'],
+    creator: '@hirableresume',
+  },
+
   icons: {
-    icon: "/logo.png",
+    icon: [
+      { url: '/logo.png', sizes: '32x32', type: 'image/png' },
+      { url: '/logo.png', sizes: '16x16', type: 'image/png' },
+    ],
+    apple: [
+      { url: '/logo.png', sizes: '180x180', type: 'image/png' },
+    ],
+    other: [
+      {
+        rel: 'mask-icon',
+        url: '/logo.png',
+      },
+    ],
+  },
+  manifest: '/manifest.json',
+  verification: {
+    google: 'google-site-verification=YOUR_VERIFICATION_CODE', // Replace with your verification code
   },
 };
 
