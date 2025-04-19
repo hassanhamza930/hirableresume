@@ -13,6 +13,7 @@ interface ResumePreviewProps {
   onDownload: () => void;
   isLoading?: boolean;
   loadingMessage?: string;
+  isMobile?: boolean;
 }
 
 const ResumePreview: React.FC<ResumePreviewProps> = ({
@@ -20,27 +21,30 @@ const ResumePreview: React.FC<ResumePreviewProps> = ({
   onCopyHTML,
   onDownload,
   isLoading = false,
-  loadingMessage
+  loadingMessage,
+  isMobile = false
 }) => {
   return (
     <div className="flex-1 flex flex-col p-6 pt-2 overflow-hidden">
       {/* Header with title and buttons */}
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-white text-md font-medium" style={{ fontFamily: "Geist" }}>
+        <h2 className="text-white text-md font-medium truncate max-w-[200px] md:max-w-none" style={{ fontFamily: "Geist" }}>
           {resume.name}
         </h2>
         <div className="flex gap-2">
-          <Button
-            onClick={() => {
-              onCopyHTML();
-            }}
-            size="sm"
-            variant="outline"
-            className="flex items-center gap-1 border-white/20 bg-zinc-900/80 text-white hover:bg-zinc-800 hover:text-white transition-all duration-200"
-          >
-            <CopyIcon className="h-4 w-4" />
-            <span>Copy HTML</span>
-          </Button>
+          {!isMobile && (
+            <Button
+              onClick={() => {
+                onCopyHTML();
+              }}
+              size="sm"
+              variant="outline"
+              className="flex items-center gap-1 border-white/20 bg-zinc-900/80 text-white hover:bg-zinc-800 hover:text-white transition-all duration-200"
+            >
+              <CopyIcon className="h-4 w-4" />
+              <span className="hidden sm:inline">Copy HTML</span>
+            </Button>
+          )}
           <Button
             onClick={() => {
               onDownload();
@@ -50,7 +54,7 @@ const ResumePreview: React.FC<ResumePreviewProps> = ({
             className="flex items-center gap-1 border-white/20 bg-zinc-900/80 text-white hover:bg-zinc-800 hover:text-white transition-all duration-200"
           >
             <FileType className="h-4 w-4" />
-            <span>Download PDF</span>
+            <span className={isMobile ? "hidden sm:inline" : ""}>Download PDF</span>
           </Button>
         </div>
       </div>
@@ -62,7 +66,7 @@ const ResumePreview: React.FC<ResumePreviewProps> = ({
           spotlightColor="rgba(255, 255, 255, 0.05)"
         >
           <div
-            className="bg-white text-zinc-950 p-10 h-full overflow-y-auto"
+            className={`bg-white text-zinc-950 ${isMobile ? 'p-4 sm:p-6' : 'p-10'} h-full overflow-y-auto`}
             dangerouslySetInnerHTML={{ __html: resume.content }}
           />
         </SpotlightCard>

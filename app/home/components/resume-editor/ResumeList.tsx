@@ -86,15 +86,29 @@ const ResumeList: React.FC<ResumeListProps> = ({
       </div>
 
       {/* Resume list */}
-      <div className="p-4 flex flex-col flex-1 overflow-hidden">
-        {resumes.map((resume) => (
-          <ResumeItem
-            key={resume.firebaseId || resume.id}
-            resume={resume}
-            isSelected={selectedResumeId === resume.id}
-            onSelect={handleSelectResume}
-          />
-        ))}
+      <div className="p-4 flex flex-col flex-1 overflow-y-auto">
+        {resumes.length > 0 ? (
+          resumes.map((resume) => (
+            <ResumeItem
+              key={resume.firebaseId || resume.id}
+              resume={resume}
+              isSelected={selectedResumeId === resume.id}
+              onSelect={handleSelectResume}
+            />
+          ))
+        ) : (
+          <div className="flex flex-col items-center justify-center h-full text-center p-4">
+            <p className="text-white/60 mb-4">You don't have any resumes yet</p>
+            <Button
+              onClick={onCreateResume}
+              variant="outline"
+              className="border-white/20 text-white hover:bg-white/10"
+            >
+              <PlusIcon className="h-5 w-5 mr-2" />
+              Create Your First Resume
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );

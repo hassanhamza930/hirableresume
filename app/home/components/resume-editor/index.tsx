@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import ResumeList from './ResumeList';
 import ResumePreview from './ResumePreview';
@@ -10,13 +10,19 @@ import { toast } from 'sonner';
 import useResumeLogic from '../../hooks/useResumeLogic';
 import { useResumeStore } from '@/app/store/resumeStore';
 import LoadingOverlay from './LoadingOverlay';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { ArrowLeft } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { AnimatePresence, motion } from 'motion/react';
 
 const ResumeEditorComponent: React.FC = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isCreatingNewResume, setIsCreatingNewResume] = useState(false);
+  const [showMobileResume, setShowMobileResume] = useState(false);
   const { createResume, updateResume, isLoading } = useResumeLogic();
-  const { resumes, selectedResumeId } = useResumeStore();
+  const { resumes, selectedResumeId, selectResume } = useResumeStore();
   const router = useRouter();
+  const isMobile = useIsMobile();
 
   // Find the currently selected resume
   const selectedResume = resumes.find(resume => resume.id === selectedResumeId);
@@ -49,7 +55,24 @@ const ResumeEditorComponent: React.FC = () => {
     }
   };
 
-  // No need for handleSelectResume as it's now handled in the ResumeList component
+  // Effect to handle mobile resume view
+  useEffect(() => {
+    if (isMobile && selectedResumeId) {
+      setShowMobileResume(true);
+    } else if (!selectedResumeId) {
+      setShowMobileResume(false);
+    }
+  }, [isMobile, selectedResumeId]);
+
+  // Handle back to resume list on mobile
+  const handleBackToList = () => {
+    setShowMobileResume(false);
+  };
+
+  // Handle clearing selected resume
+  const handleClearSelectedResume = () => {
+    selectResume(null);
+  };
 
   // Handle copying resume HTML
   const handleCopyHTML = () => {
@@ -99,42 +122,107 @@ const ResumeEditorComponent: React.FC = () => {
   return (
     <>
       <div className="flex flex-col md:flex-row w-full h-[calc(100vh-64px)] mt-16 overflow-hidden">
-        {/* Left Column - Resume List */}
-        <ResumeList
-          onCreateResume={handleCreateResume}
-        />
+        {/* Mobile View Logic */}
+        {isMobile ? (
+          <AnimatePresence mode="wait">
+            {!showMobileResume || !selectedResume ? (
+              /* Mobile Resume List View */
+              <motion.div
+                key="mobile-list"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.3 }}
+                className="w-full h-full flex flex-col"
+              >
+                <ResumeList
+                  onCreateResume={handleCreateResume}
+                />
+              </motion.div>
+            ) : (
+              /* Mobile Resume Detail View */
+              <motion.div
+                key="mobile-detail"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 20 }}
+                transition={{ duration: 0.3 }}
+                className="w-full h-full flex flex-col"
+              >
+                {/* Back button for mobile */}
+                <div className="p-3 bg-zinc-950/90 backdrop-blur-xl border-b border-white/10">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleBackToList}
+                    className="text-white flex items-center gap-1"
+                  >
+                    <ArrowLeft className="h-4 w-4" />
+                    <span>Back to Resumes</span>
+                  </Button>
+                </div>
 
-        {/* Right Column - Resume Preview and Editor */}
-        <div className="flex-1 h-full flex flex-col overflow-hidden relative">
-          {selectedResume ? (
-            <>
-              {/* Resume Preview */}
-              <ResumePreview
-                resume={selectedResume}
-                onCopyHTML={handleCopyHTML}
-                onDownload={handleDownload}
-                isLoading={isLoading}
-                loadingMessage={'Adding magic to your resume...'}
-              />
+                {/* Resume Preview */}
+                <div className="flex-1 h-full flex flex-col overflow-hidden relative">
+                  <ResumePreview
+                    resume={selectedResume}
+                    onCopyHTML={handleCopyHTML}
+                    onDownload={handleDownload}
+                    isLoading={isLoading}
+                    loadingMessage={'Adding magic to your resume...'}
+                    isMobile={true}
+                  />
 
-              {/* Resume Editor */}
-              <ResumeEditor
-                onUpdateResume={handleUpdateResume}
-                isLoading={isLoading}
-              />
-            </>
-          ) : isCreatingNewResume ? (
-            <div className="flex-1 flex flex-col p-6 overflow-hidden relative">
-              <div className="flex-1 min-h-0 overflow-hidden relative bg-zinc-900/50 rounded-lg border border-white/10">
-                <LoadingOverlay isVisible={true} message={'Creating your tailored resume...'} />
-              </div>
+                  {/* Resume Editor */}
+                  <ResumeEditor
+                    onUpdateResume={handleUpdateResume}
+                    isLoading={isLoading}
+                  />
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        ) : (
+          /* Desktop View */
+          <>
+            {/* Left Column - Resume List */}
+            <ResumeList
+              onCreateResume={handleCreateResume}
+            />
+
+            {/* Right Column - Resume Preview and Editor */}
+            <div className="flex-1 h-full flex flex-col overflow-hidden relative">
+              {selectedResume ? (
+                <>
+                  {/* Resume Preview */}
+                  <ResumePreview
+                    resume={selectedResume}
+                    onCopyHTML={handleCopyHTML}
+                    onDownload={handleDownload}
+                    isLoading={isLoading}
+                    loadingMessage={'Adding magic to your resume...'}
+                  />
+
+                  {/* Resume Editor */}
+                  <ResumeEditor
+                    onUpdateResume={handleUpdateResume}
+                    isLoading={isLoading}
+                  />
+                </>
+              ) : isCreatingNewResume ? (
+                <div className="flex-1 flex flex-col p-6 overflow-hidden relative">
+                  <div className="flex-1 min-h-0 overflow-hidden relative bg-zinc-900/50 rounded-lg border border-white/10">
+                    <LoadingOverlay isVisible={true} message={'Creating your tailored resume...'} />
+                  </div>
+                </div>
+              ) : (
+                <div className="flex items-center justify-center h-full">
+                  <p className="text-white/60">Select a resume or create a new one</p>
+                </div>
+              )}
             </div>
-          ) : (
-            <div className="flex items-center justify-center h-full">
-              <p className="text-white/60">Select a resume or create a new one</p>
-            </div>
-          )}
-        </div>
+          </>
+        )}
       </div>
 
       {/* Create Resume Modal */}
