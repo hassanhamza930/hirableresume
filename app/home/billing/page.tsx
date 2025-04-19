@@ -5,13 +5,14 @@ import { motion } from "motion/react";
 import BlurReveal from "@/components/BlurText";
 import SpotlightCard from "@/components/SpotLightCard";
 import { Button } from "@/components/ui/button";
-import { FaCheck, FaTimes } from "react-icons/fa";
+import { FaCheck, FaTimes, FaCreditCard } from "react-icons/fa";
 import { MdOutlineAutoAwesome } from "react-icons/md";
 import { HiOutlineLightningBolt } from "react-icons/hi";
 import { LoggedInWrapper } from '../../components/LoggedInWrapper';
 import DashboardNavbar from '../components/HomeNavbar';
 import { useAuth } from '../../hooks/useAuth';
 import { useUserStore } from '../../store/userStore';
+import { getCurrentPlan, hasActivePlan } from '../../utils/planUtils';
 
 interface PricingFeature {
   id: number;
@@ -60,7 +61,7 @@ const pricingFeatures = {
 const pricingPlans: PricingPlan[] = [
   {
     id: 2,
-    name: "Pro",
+    name: "Premium",
     description: "For serious job seekers who want the best results",
     price: "$19.99",
     period: "monthly",
@@ -89,9 +90,19 @@ const pricingPlans: PricingPlan[] = [
 
 export default function BillingPage() {
   const { userData } = useUserStore();
+  const { user } = useAuth();
 
   // Get user credits from the Zustand store
   const userCredits = userData?.credits ?? null;
+
+  // Get current plan
+  const currentPlan = getCurrentPlan(userData);
+  const hasSubscription = hasActivePlan(userData);
+
+  // Handle manage billing click
+  const handleManageBilling = () => {
+    window.open('https://billing.stripe.com/p/login/9AQfZWdIT6y1f8Q3cc', '_blank');
+  };
 
   return (
     <LoggedInWrapper>
@@ -126,11 +137,76 @@ export default function BillingPage() {
           ease: "easeInOut",
           delay:  0.2
         }}
-        className="mt-4 mb-8 bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-6 py-2">
+        className="mt-4 mb-4 bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-6 py-2">
           <span style={{ fontFamily: "Geist Mono" }} className="text-white text-sm font-medium">
             Current Credits: <span className="font-bold">{userCredits !== null ? userCredits : '...'}</span>
           </span>
         </motion.div>
+
+        {/* Current Plan */}
+        {currentPlan && (
+          <motion.div
+            variants={{
+              hidden: {
+                opacity: 0,
+                filter: "blur(10px)",
+                transform: "translateY(5%)",
+              },
+              visible: {
+                opacity: 1,
+                filter: "blur(0)",
+                transform: "translateY(0)",
+              },
+            }}
+            initial="hidden"
+            whileInView="visible"
+            transition={{
+              duration: 0.8,
+              ease: "easeInOut",
+              delay: 0.3
+            }}
+            className="mb-4 bg-white/90 text-black backdrop-blur-md border border-white/20 rounded-full px-6 py-2"
+          >
+            <span style={{ fontFamily: "Geist Mono" }} className="text-sm font-medium">
+              Current Plan: <span className="font-bold capitalize">{currentPlan}</span>
+            </span>
+          </motion.div>
+        )}
+
+        {/* Manage Billing Button */}
+        {hasSubscription && (
+          <motion.div
+            variants={{
+              hidden: {
+                opacity: 0,
+                filter: "blur(10px)",
+                transform: "translateY(5%)",
+              },
+              visible: {
+                opacity: 1,
+                filter: "blur(0)",
+                transform: "translateY(0)",
+              },
+            }}
+            initial="hidden"
+            whileInView="visible"
+            transition={{
+              duration: 0.8,
+              ease: "easeInOut",
+              delay: 0.4
+            }}
+            className="mb-8"
+          >
+            <Button
+              variant="outline"
+              className="flex items-center gap-2 hover:border-2 text-white border-white/20 transition-all duration-300 hover:bg-white/10 hover:scale-105"
+              onClick={handleManageBilling}
+            >
+              <FaCreditCard className="text-white" />
+              <span style={{ fontFamily: "Geist" }}>Manage Billing</span>
+            </Button>
+          </motion.div>
+        )}
 
         {/* Section Description */}
         <BlurReveal
@@ -166,7 +242,10 @@ export default function BillingPage() {
               viewport={{ once: true }}
               className="w-full sm:w-[300px] md:w-[320px]" // Responsive width
             >
-              <PricingCard plan={plan} />
+              <PricingCard
+                plan={plan}
+                isCurrentPlan={currentPlan === plan.name.toLowerCase()}
+              />
             </motion.div>
           ))}
         </div>
@@ -186,15 +265,66 @@ export default function BillingPage() {
   );
 }
 
-function PricingCard({ plan }: { plan: PricingPlan }) {
+function PricingCard({ plan, isCurrentPlan = false }: { plan: PricingPlan, isCurrentPlan?: boolean }) {
+  const { userData } = useUserStore();
+  const { user } = useAuth();
+
+  const handlePurchase = () => {
+    // If it's already the current plan, don't do anything
+    if (isCurrentPlan) {
+      return;
+    }
+
+    const uid = localStorage.getItem('uid');
+    const email = user?.email || userData?.email;
+    let paymentUrl = "";
+
+    // For basic plan, redirect to the basic Stripe payment link
+    if (plan.name === "Basic") {
+      paymentUrl = "https://buy.stripe.com/14k14wckq1mAdJm28q";
+    }
+
+    // For premium plan, redirect to the premium Stripe payment link
+    else if (plan.name === "Pro") {
+      paymentUrl = "https://buy.stripe.com/9AQaF60BI5CQ6gU4gz";
+    }
+
+    // Add parameters if available
+    const params = new URLSearchParams();
+    if (email) params.append('prefilled_email', email);
+    if (uid) params.append('client_reference_id', uid);
+
+    // Append parameters to URL if any exist
+    if (params.toString()) {
+      paymentUrl += `?${params.toString()}`;
+    }
+
+    // Redirect to the payment URL
+    window.location.href = paymentUrl;
+  };
+
+  // Determine border color based on whether it's the current plan
+  const borderClass = plan.popular
+    ? 'border-purple-500/50'
+    : 'border-white/10';
+
+  // Determine spotlight color
+  const spotlightColor = plan.spotlightColor || "rgba(255, 255, 255, 0.1)";
+
   return (
     <SpotlightCard
-      className={`relative overflow-visible h-full border ${plan.popular ? 'border-purple-500/50' : 'border-white/10'} bg-zinc-950/50 backdrop-blur-xl p-5 relative z-10`}
-      spotlightColor={plan.spotlightColor || "rgba(255, 255, 255, 0.1)"}
+      className={`relative overflow-visible h-full border ${borderClass} bg-zinc-950/50 backdrop-blur-xl p-5 relative z-10`}
+      spotlightColor={spotlightColor}
     >
-      {plan.popular && (
+      {plan.popular && !isCurrentPlan && (
         <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-white/80 via-white to-white/80 text-black text-xs py-1 px-3 rounded-full z-20">
           <span style={{ fontFamily: "Geist" }}>Most Popular</span>
+        </div>
+      )}
+
+      {isCurrentPlan && (
+        <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-white/80 via-white to-white/80 text-black text-xs py-1 px-3 rounded-full z-20">
+          <span style={{ fontFamily: "Geist" }}>Current Plan</span>
         </div>
       )}
 
@@ -248,10 +378,11 @@ function PricingCard({ plan }: { plan: PricingPlan }) {
 
         {/* CTA Button */}
         <Button
-          className="w-full text-md font-medium shadow-none hover:shadow-none hover:scale-105 py-5"
-          onClick={() => alert(`Coming soon: Purchase ${plan.credits} credits for ${plan.price}`)}
+          className={`w-full text-md font-medium shadow-none hover:shadow-none ${!isCurrentPlan ? 'hover:scale-105' : 'opacity-75 cursor-default'} py-5`}
+          onClick={handlePurchase}
+          disabled={isCurrentPlan}
         >
-          {plan.ctaText}
+          {isCurrentPlan ? 'Current Plan' : plan.ctaText}
         </Button>
       </div>
     </SpotlightCard>
