@@ -65,10 +65,39 @@ const ResumePreview: React.FC<ResumePreviewProps> = ({
           className="w-full h-full border border-white/10 bg-white backdrop-blur-xl"
           spotlightColor="rgba(255, 255, 255, 0.05)"
         >
-          <div
-            className={`bg-white text-zinc-950 ${isMobile ? 'p-4 sm:p-6' : 'p-10'} h-full overflow-y-auto`}
-            dangerouslySetInnerHTML={{ __html: resume.content }}
-          />
+          {isMobile ? (
+            <div className="bg-white h-full overflow-auto">
+              {/* Outer container for scrolling */}
+              <div className="w-full py-4 flex justify-center">
+                {/* This is a wrapper to handle the scaling */}
+                <div style={{
+                  transform: 'scale(0.5)',
+                  transformOrigin: 'top center',
+                  marginBottom: '50px'
+                }}>
+                  {/* Fixed width A4 container */}
+                  <div
+                    className="bg-white text-zinc-950 py-6 px-4 shadow-md"
+                    style={{
+                      // This is a standard A4 width
+                      width: '595px',
+                    }}
+                  >
+                    {/* The actual resume content */}
+                    <div
+                      className="resume-content"
+                      dangerouslySetInnerHTML={{ __html: resume.content }}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div
+              className="bg-white text-zinc-950 p-10 h-full overflow-y-auto"
+              dangerouslySetInnerHTML={{ __html: resume.content }}
+            />
+          )}
         </SpotlightCard>
 
         {/* Loading overlay */}

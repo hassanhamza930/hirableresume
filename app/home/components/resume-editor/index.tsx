@@ -11,11 +11,17 @@ import useResumeLogic from '../../hooks/useResumeLogic';
 import { useResumeStore } from '@/app/store/resumeStore';
 import LoadingOverlay from './LoadingOverlay';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { ArrowLeft } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { AnimatePresence, motion } from 'motion/react';
 
-const ResumeEditorComponent: React.FC = () => {
+interface ResumeEditorComponentProps {
+  showMobileResumeList: boolean;
+  setShowMobileResumeList: (show: boolean) => void;
+}
+
+const ResumeEditorComponent: React.FC<ResumeEditorComponentProps> = ({
+  showMobileResumeList,
+  setShowMobileResumeList
+}) => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isCreatingNewResume, setIsCreatingNewResume] = useState(false);
   const [showMobileResume, setShowMobileResume] = useState(false);
@@ -58,16 +64,11 @@ const ResumeEditorComponent: React.FC = () => {
   // Effect to handle mobile resume view
   useEffect(() => {
     if (isMobile && selectedResumeId) {
-      setShowMobileResume(true);
+      setShowMobileResumeList(false);
     } else if (!selectedResumeId) {
-      setShowMobileResume(false);
+      setShowMobileResumeList(true);
     }
-  }, [isMobile, selectedResumeId]);
-
-  // Handle back to resume list on mobile
-  const handleBackToList = () => {
-    setShowMobileResume(false);
-  };
+  }, [isMobile, selectedResumeId, setShowMobileResumeList]);
 
   // Handle clearing selected resume
   const handleClearSelectedResume = () => {
@@ -125,7 +126,7 @@ const ResumeEditorComponent: React.FC = () => {
         {/* Mobile View Logic */}
         {isMobile ? (
           <AnimatePresence mode="wait">
-            {!showMobileResume || !selectedResume ? (
+            {showMobileResumeList || !selectedResume ? (
               /* Mobile Resume List View */
               <motion.div
                 key="mobile-list"
@@ -149,18 +150,7 @@ const ResumeEditorComponent: React.FC = () => {
                 transition={{ duration: 0.3 }}
                 className="w-full h-full flex flex-col"
               >
-                {/* Back button for mobile */}
-                <div className="p-3 bg-zinc-950/90 backdrop-blur-xl border-b border-white/10">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={handleBackToList}
-                    className="text-white flex items-center gap-1"
-                  >
-                    <ArrowLeft className="h-4 w-4" />
-                    <span>Back to Resumes</span>
-                  </Button>
-                </div>
+                {/* No back button here anymore - moved to navbar */}
 
                 {/* Resume Preview */}
                 <div className="flex-1 h-full flex flex-col overflow-hidden relative">

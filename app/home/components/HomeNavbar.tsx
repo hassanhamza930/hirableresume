@@ -10,6 +10,10 @@ import { toast } from 'sonner';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { AnimatePresence, motion } from "motion/react";
 import { useUserStore } from '../../store/userStore';
+import { useResumeStore } from '../../store/resumeStore';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { ArrowLeft } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -31,18 +35,28 @@ const NavOption = ({
   return <button onClick={onClick} className={`transition-all duration-200 hover:text-white/90 hover:underline cursor-pointer w-max ${className || ''}`}>{children}</button>;
 };
 
-const HomeNavbar: React.FC = () => {
+interface HomeNavbarProps {
+  onBackToResumeList?: () => void;
+  showMobileResumeList?: boolean;
+}
+
+const HomeNavbar: React.FC<HomeNavbarProps> = ({ onBackToResumeList, showMobileResumeList = true }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { user, signOut } = useAuth();
   const { userData } = useUserStore();
+  const { selectedResumeId } = useResumeStore();
   const router = useRouter();
   const pathname = usePathname();
+  const isMobile = useIsMobile();
 
   // Check if we're on a page other than the main home page
   const isNotHomePage = pathname !== '/home';
 
   // Check if user is on profile page and not onboarded yet
   const isProfilePageNotOnboarded = pathname === '/home/profile' && userData?.onboarded !== true;
+
+  // Check if we're on the home page and a resume is selected on mobile
+  const showBackToResumesButton = isMobile && pathname === '/home' && selectedResumeId !== null && !showMobileResumeList && onBackToResumeList;
 
   // Get user credits from the Zustand store
   const userCredits = userData?.credits ?? null;
@@ -76,7 +90,7 @@ const HomeNavbar: React.FC = () => {
       style={{ fontFamily: "Geist Mono" }}
       className="fixed z-20 top-0 left-0 right-0 flex items-center justify-between shadow-sm shadow-white/5 md:shadow-white/10 px-4 sm:px-10 py-2 text-sm font-medium text-white bg-white/5 md:border-b-[1px] border-white/20 transition-all duration-300 backdrop-blur-xl backdrop-brightness-50"
     >
-      {/* Logo and back button */}
+      {/* Logo and back buttons */}
       <div className="flex items-center gap-2">
         {isNotHomePage && !isProfilePageNotOnboarded && (
           <Link
@@ -85,6 +99,14 @@ const HomeNavbar: React.FC = () => {
           >
             ← Back to home
           </Link>
+        )}
+        {showBackToResumesButton && (
+          <button
+            onClick={onBackToResumeList}
+            className="text-white/70 hover:text-white transition-all duration-300 mr-4"
+          >
+            ← Back to resumes
+          </button>
         )}
       </div>
 
@@ -176,6 +198,8 @@ const HomeNavbar: React.FC = () => {
                 ← Back to home
               </NavOption>
             )}
+
+            {/* Back to resumes button removed from mobile menu */}
 
             {/* Credits display in mobile menu - clickable */}
             <div
