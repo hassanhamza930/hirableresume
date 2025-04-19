@@ -148,12 +148,12 @@ const ResumeEditorComponent: React.FC<ResumeEditorComponentProps> = ({
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 20 }}
                 transition={{ duration: 0.3 }}
-                className="w-full h-full flex flex-col"
+                className="w-full h-full overflow-hidden flex flex-col"
               >
                 {/* No back button here anymore - moved to navbar */}
 
                 {/* Resume Preview */}
-                <div className="flex-1 h-full flex flex-col overflow-hidden relative">
+                <div className="flex-1 h-full flex flex-col overflow-hidden relative md:pb-0 pb-36">
                   <ResumePreview
                     resume={selectedResume}
                     onCopyHTML={handleCopyHTML}

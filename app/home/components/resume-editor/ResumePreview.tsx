@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { FileType, CopyIcon } from 'lucide-react';
 import SpotlightCard from '@/components/SpotLightCard';
@@ -24,6 +24,25 @@ const ResumePreview: React.FC<ResumePreviewProps> = ({
   loadingMessage,
   isMobile = false
 }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(0.5); // Default scale
+
+  // Function to calculate and update scale based on container width
+  const updateScale = () => {
+    if (containerRef.current && isMobile) {
+      const containerWidth = containerRef.current.clientWidth;
+      // A4 width is 595px, calculate scale to fit container width with some padding
+      const newScale = (containerWidth - 20) / 595; // 10px padding on each side
+      setScale(newScale);
+    }
+  };
+
+  // Update scale on mount and when container size changes
+  useEffect(() => {
+    updateScale();
+    window.addEventListener('resize', updateScale);
+    return () => window.removeEventListener('resize', updateScale);
+  }, [isMobile]);
   return (
     <div className="flex-1 flex flex-col p-6 pt-2 overflow-hidden">
       {/* Header with title and buttons */}
@@ -66,14 +85,14 @@ const ResumePreview: React.FC<ResumePreviewProps> = ({
           spotlightColor="rgba(255, 255, 255, 0.05)"
         >
           {isMobile ? (
-            <div className="bg-white h-full overflow-auto">
+            <div className="bg-white h-full w-full overflow-auto" ref={containerRef}>
               {/* Outer container for scrolling */}
-              <div className="w-full py-4 flex justify-center">
+              <div className="w-full py-4 flex h-full justify-center">
                 {/* This is a wrapper to handle the scaling */}
                 <div style={{
-                  transform: 'scale(0.5)',
+                  transform: `scale(${scale})`,
                   transformOrigin: 'top center',
-                  marginBottom: '50px'
+                  marginBottom: `${50 * scale}px`
                 }}>
                   {/* Fixed width A4 container */}
                   <div

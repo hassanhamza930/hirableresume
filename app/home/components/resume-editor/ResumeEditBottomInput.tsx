@@ -43,10 +43,10 @@ const ResumeEditor: React.FC<ResumeEditorProps> = ({ onUpdateResume, isLoading =
           onChange={(e) => setEditContent(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="Enter your customization request here..."
-          className="w-full h-16 sm:h-24 bg-zinc-900/90 border border-yellow-500/30 border-dashed rounded-md p-3 pr-14 pb-12 text-white placeholder:text-white/40 focus:outline-none focus:border-yellow-500/50 resize-none text-sm sm:text-base"
+          className="w-full h-24 bg-zinc-900/90 border border-yellow-500/30 border-dashed rounded-md p-3 pr-14 pb-12 text-white placeholder:text-white/40 focus:outline-none focus:border-yellow-500/50 resize-none text-sm sm:text-base"
         />
 
-        <div className="absolute bottom-3 sm:bottom-5 right-3">
+        <div className="absolute bottom-5 right-3">
           <Button
             onClick={handleSubmit}
             disabled={!editContent.trim() || isLoading}
