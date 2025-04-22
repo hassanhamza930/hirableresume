@@ -85,7 +85,7 @@ const keyFeatures: KeyFeature[] = [
 
 export default function ServerFeatures() {
   return (
-    <main className="w-full flex flex-col justify-start items-center px-[5%] sm:px-[10%] mt-24 md:mt-48">
+    <main id="features" className="w-full flex flex-col justify-start items-center px-[5%] sm:px-[10%] mt-24 md:mt-48">
       {/* HOW IT WORKS Badge */}
       <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-full px-4 py-1 mb-6">
         <span style={{ fontFamily: "Geist Mono" }} className="text-white/70 text-xs font-medium">

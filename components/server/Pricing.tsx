@@ -80,7 +80,7 @@ const pricingPlans: PricingPlan[] = [
 
 export default function ServerPricing() {
   return (
-    <section className="w-full flex flex-col justify-start items-center px-[5%] sm:px-[10%] mt-24 md:mt-48" aria-labelledby="pricing-title">
+    <section id="pricing" className="w-full flex flex-col justify-start items-center px-[5%] sm:px-[10%] mt-24 md:mt-48" aria-labelledby="pricing-title">
       {/* Section Label */}
       <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-full px-4 py-1 mb-6 mx-auto w-fit">
         <span style={{ fontFamily: "Geist Mono" }} className="text-white/70 text-xs font-medium">

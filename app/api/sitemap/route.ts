@@ -15,6 +15,9 @@ export async function GET() {
     { url: '/blog', changefreq: 'weekly', priority: '0.8', lastmod: date },
     { url: '/blog/how-to-make-hirable-resume-2025', changefreq: 'monthly', priority: '0.7', lastmod: date },
     { url: '/blog/why-hiring-sucks-in-2025', changefreq: 'monthly', priority: '0.7', lastmod: date },
+    { url: '/affiliate', changefreq: 'monthly', priority: '0.7', lastmod: date },
+    { url: '/affiliate/signup', changefreq: 'monthly', priority: '0.6', lastmod: date },
+    { url: '/start', changefreq: 'monthly', priority: '0.6', lastmod: date },
   ];
 
   // Generate the XML sitemap

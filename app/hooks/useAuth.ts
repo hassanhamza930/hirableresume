@@ -10,10 +10,11 @@ import {
   User
 } from 'firebase/auth';
 import { getApps, initializeApp } from 'firebase/app';
-import { getFirestore, doc, setDoc, getDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
+import { getFirestore, doc, setDoc, getDoc, updateDoc, serverTimestamp, collection, query, where, getDocs, increment } from 'firebase/firestore';
 import { UserData } from '../interfaces';
 import { toast } from 'sonner';
 import { useUserStore } from '../store/userStore';
+import { firebaseConfig } from '../config/firebase';
 
 type AuthError = {
   code: string;
@@ -32,16 +33,27 @@ export function useAuth() {
   const [auth, setAuth] = useState<ReturnType<typeof getAuth> | null>(null);
   const [provider, setProvider] = useState<GoogleAuthProvider | null>(null);
 
-  // Firebase config
-  const firebaseConfig = {
-    apiKey: "AIzaSyDvcBIKyIsOY2mEptI1NNjoTqCVFRseXO4",
-    authDomain: "chatapp-dda45.firebaseapp.com",
-    databaseURL: "https://chatapp-dda45.firebaseio.com",
-    projectId: "chatapp-dda45",
-    storageBucket: "chatapp-dda45.firebasestorage.app",
-    messagingSenderId: "912752217974",
-    appId: "1:912752217974:web:33385b2084d62e7bf77457",
-    measurementId: "G-3ZNFS8EW3H"
+  // Track affiliate signup - increment the signups count for the affiliate
+  const trackAffiliateSignup = async (referralCode: string) => {
+    try {
+      const db = getFirestore();
+
+      // Find the affiliate with this referral code
+      const affiliatesRef = collection(db, 'affiliates');
+      const affiliateQuery = query(affiliatesRef, where('referralCode', '==', referralCode));
+      const affiliateSnapshot = await getDocs(affiliateQuery);
+
+      if (!affiliateSnapshot.empty) {
+        const affiliateDoc = affiliateSnapshot.docs[0];
+
+        // Increment the signups count
+        await updateDoc(doc(db, 'affiliates', affiliateDoc.id), {
+          'stats.signups': increment(1)
+        });
+      }
+    } catch (error) {
+      console.error('Error tracking affiliate signup:', error);
+    }
   };
 
   // Initialize Firebase Auth and Google Provider
@@ -99,6 +111,21 @@ export function useAuth() {
           credits: 5,
           onboarded: false // New users need to complete onboarding
         };
+
+        // Check if there's a referral code in localStorage
+        const refid = typeof window !== 'undefined' ? localStorage.getItem('refid') : null;
+
+        if (refid) {
+          // Add referral information to the user document
+          userData.referral = {
+            referralCode: refid,
+            referredAt: serverTimestamp() as unknown as Date,
+            converted: false
+          };
+
+          // Track the signup in the affiliate's document
+          await trackAffiliateSignup(refid);
+        }
 
         await setDoc(userRef, userData);
       } else {

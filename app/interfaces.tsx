@@ -1,3 +1,5 @@
+import { ReferralData } from './interfaces/affiliate';
+
 export interface UserData {
   uid: string;
   email: string;
@@ -9,6 +11,7 @@ export interface UserData {
   credits: number;
   onboarded?: boolean;
   resumeData?: string; // User's resume data in natural language
+  referral?: ReferralData; // Referral information if user came through an affiliate link
 }
 
 export interface Resume {

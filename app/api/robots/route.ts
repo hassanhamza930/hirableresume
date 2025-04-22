@@ -18,6 +18,7 @@ Disallow: /api/
 Disallow: /_next/
 Disallow: /basic
 Disallow: /premium
+Disallow: /affiliate/dashboard/
 
 # Allow specific bots with custom rules
 User-agent: Googlebot
@@ -28,6 +29,7 @@ Disallow: /api/
 Disallow: /_next/
 Disallow: /basic
 Disallow: /premium
+Disallow: /affiliate/dashboard/
 
 User-agent: Bingbot
 Allow: /
@@ -37,6 +39,7 @@ Disallow: /api/
 Disallow: /_next/
 Disallow: /basic
 Disallow: /premium
+Disallow: /affiliate/dashboard/
 
 # Crawl delay for bots to reduce server load
 User-agent: *

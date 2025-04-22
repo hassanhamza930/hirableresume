@@ -36,18 +36,18 @@ const Navbar: React.FC = () => {
 
       {/* Desktop navigation */}
       <div className="hidden sm:flex items-center justify-center gap-x-10">
-        <NavOption onClick={() => { }} >Features</NavOption>
-        <NavOption onClick={() => { }} >Pricing</NavOption>
-        <NavOption onClick={() => { }} >Affiliate</NavOption>
+        <Link href="/#features"><NavOption>Features</NavOption></Link>
+        <Link href="/#pricing"><NavOption>Pricing</NavOption></Link>
+        <Link href="/affiliate"><NavOption>Affiliate</NavOption></Link>
         <Link href="/signin"><NavOption>Login</NavOption></Link>
       </div>
 
       {/* Mobile navigation */}
       {isMenuOpen && (
         <div className="absolute top-full left-0 right-0 flex flex-col items-center gap-y-4 py-4 bg-zinc-950/90 backdrop-blur-xl border border-white/10 rounded-b-xl sm:hidden">
-          <NavOption onClick={() => { setIsMenuOpen(false); }} >Features</NavOption>
-          <NavOption onClick={() => { setIsMenuOpen(false); }} >Pricing</NavOption>
-          <NavOption onClick={() => { setIsMenuOpen(false); }} >Affiliate</NavOption>
+          <Link href="/#features"><NavOption onClick={() => { setIsMenuOpen(false); }}>Features</NavOption></Link>
+          <Link href="/#pricing"><NavOption onClick={() => { setIsMenuOpen(false); }}>Pricing</NavOption></Link>
+          <Link href="/affiliate"><NavOption onClick={() => { setIsMenuOpen(false); }}>Affiliate</NavOption></Link>
           <Link href="/signin"><NavOption onClick={() => { setIsMenuOpen(false); }}>Login</NavOption></Link>
         </div>
       )}

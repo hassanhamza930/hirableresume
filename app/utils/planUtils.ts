@@ -1,8 +1,9 @@
 'use client';
 
-import { doc, getFirestore, updateDoc, getDoc } from 'firebase/firestore';
+import { doc, getFirestore, updateDoc, getDoc, collection, query, where, getDocs, increment, serverTimestamp } from 'firebase/firestore';
 import { toast } from 'sonner';
 import { UserData } from '../interfaces';
+import { ReferralData } from '../interfaces/affiliate';
 
 type PlanType = 'basic' | 'premium';
 
@@ -59,11 +60,23 @@ export const addPlanCredits = async (uid: string, planType: PlanType): Promise<b
     const userData = userSnap.data() as UserData;
     const planDetails = PLAN_CREDITS[planType];
 
-    // Update user's credits with plan credits and set the plan
-    await updateDoc(userRef, {
+    // Check if this is a conversion from a referral
+    const updateData: any = {
       credits: (userData.credits || 0) + planDetails.credits,
       plan: planType
-    });
+    };
+
+    // If the user has referral data and hasn't converted yet, mark as converted
+    if (userData.referral && !userData.referral.converted) {
+      updateData['referral.converted'] = true;
+      updateData['referral.conversionDate'] = serverTimestamp();
+
+      // Track the conversion in the affiliate's stats
+      await trackAffiliatePurchase(userData.referral.referralCode);
+    }
+
+    // Update user's credits with plan credits and set the plan
+    await updateDoc(userRef, updateData);
 
     toast.success(`${planDetails.planName} plan (${planDetails.credits} credits) added to your account!`);
     return true;
@@ -71,6 +84,32 @@ export const addPlanCredits = async (uid: string, planType: PlanType): Promise<b
     console.error(`Error adding ${planType} plan:`, error);
     toast.error(`Failed to add ${planType} plan. Please try again.`);
     return false;
+  }
+};
+
+/**
+ * Tracks a purchase conversion for an affiliate
+ * @param referralCode The affiliate's referral code
+ */
+const trackAffiliatePurchase = async (referralCode: string): Promise<void> => {
+  try {
+    const db = getFirestore();
+
+    // Find the affiliate with this referral code
+    const affiliatesRef = collection(db, 'affiliates');
+    const affiliateQuery = query(affiliatesRef, where('referralCode', '==', referralCode));
+    const affiliateSnapshot = await getDocs(affiliateQuery);
+
+    if (!affiliateSnapshot.empty) {
+      const affiliateDoc = affiliateSnapshot.docs[0];
+
+      // Increment the purchases count
+      await updateDoc(doc(db, 'affiliates', affiliateDoc.id), {
+        'stats.purchases': increment(1)
+      });
+    }
+  } catch (error) {
+    console.error('Error tracking affiliate purchase:', error);
   }
 };
 
