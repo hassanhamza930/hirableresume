@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { toast } from 'sonner';
 import { getFirestore, doc, getDoc, updateDoc, increment, collection, query, where, getDocs } from 'firebase/firestore';
@@ -9,7 +9,8 @@ import { firebaseConfig } from '@/app/config/firebase';
 import Image from 'next/image';
 import { motion } from 'motion/react';
 
-export default function StartPage() {
+// Create a client component that uses the searchParams
+function StartPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState(true);
@@ -94,5 +95,30 @@ export default function StartPage() {
         </p>
       </motion.div>
     </div>
+  );
+}
+
+// Export the main page component with Suspense boundary
+export default function StartPage() {
+  return (
+    <Suspense fallback={
+      <div className="w-full h-screen flex flex-col justify-center items-center bg-black">
+        <div className="flex flex-col items-center">
+          <div className="relative w-32 h-32 mb-8">
+            <Image
+              src="/logo.png"
+              alt="HirableResume Logo"
+              fill
+              className="object-contain animate-pulse"
+            />
+          </div>
+          <p className="text-white text-lg" style={{ fontFamily: "Geist Mono" }}>
+            Loading...
+          </p>
+        </div>
+      </div>
+    }>
+      <StartPageContent />
+    </Suspense>
   );
 }
