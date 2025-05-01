@@ -176,7 +176,7 @@ export default function useResumeLogic({ userId }: UseResumeLogicProps = {}) {
           'X-Title': 'HirableResume'
         },
         body: JSON.stringify({
-          model: 'openai/o4-mini',
+          model: 'openai/gpt-4.1',
           messages: [
             {
               role: 'system',
