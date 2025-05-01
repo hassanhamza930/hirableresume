@@ -10,6 +10,7 @@ import { getFirestore, collection, addDoc, serverTimestamp, updateDoc, query, wh
 import { toast } from 'sonner';
 import { deductCredits } from '@/app/utils/creditUtils';
 import { useRouter } from 'next/navigation';
+import { replace, parseReplacements } from '@/app/utils/diffUtils';
 
 interface UseResumeLogicProps {
   userId?: string;
@@ -291,7 +292,7 @@ export default function useResumeLogic({ userId }: UseResumeLogicProps = {}) {
   };
 
   /**
-   * Generates updated resume content based on the user's request
+   * Generates updated resume content based on the user's request using a diff-based approach
    * @param currentContent The current HTML content of the resume
    * @param userRequest The user's request for updating the resume
    * @returns The updated resume content in HTML format
@@ -307,7 +308,7 @@ export default function useResumeLogic({ userId }: UseResumeLogicProps = {}) {
           'X-Title': 'HirableResume'
         },
         body: JSON.stringify({
-          model: 'google/gemini-2.5-flash-preview',
+          model: 'openai/gpt-4.1',
           messages: [
             {
               role: 'system',
@@ -327,9 +328,10 @@ export default function useResumeLogic({ userId }: UseResumeLogicProps = {}) {
               Please update it based on this request:
               ${userRequest}.
 
-
               -----------------------------
-              Reply with entire updated HTML of the entire page and not just updated section.`
+              IMPORTANT: Instead of providing the entire HTML, use the diff-based approach as described in the system instructions.
+              Identify specific sections that need to be changed and provide them using <old></old> and <new></new> tags.
+              Make sure the content inside <old> tags exactly matches the text in the original HTML.`
             }
           ],
         })
@@ -341,7 +343,31 @@ export default function useResumeLogic({ userId }: UseResumeLogicProps = {}) {
         throw new Error(data.error?.message || 'Failed to generate updated resume content');
       }
 
-      return data.choices[0]?.message?.content || null;
+      const aiResponse = data.choices[0]?.message?.content;
+
+      if (!aiResponse) {
+        throw new Error('Empty response from AI');
+      }
+
+      try {
+        // Parse the replacements from the AI response
+        const replacements = parseReplacements(aiResponse);
+
+        // Apply the replacements to the current content
+        const updatedContent = replace(currentContent, replacements);
+
+        return updatedContent;
+      } catch (parseError) {
+        console.error('Error parsing AI response for replacements:', parseError);
+
+        // Fallback: If parsing fails, try to use the response as a full HTML replacement
+        if (aiResponse.includes('<!DOCTYPE html>')) {
+          console.log('Falling back to full HTML replacement');
+          return aiResponse;
+        }
+
+        throw new Error('Failed to parse AI response and no valid fallback available');
+      }
     } catch (error) {
       console.error('Error generating updated resume content:', error);
       return null;
