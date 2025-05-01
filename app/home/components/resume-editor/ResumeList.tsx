@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { PlusIcon } from 'lucide-react';
+import { PlusIcon, SearchIcon } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
+import { Input } from '@/components/ui/input';
 import ResumeItem from './ResumeItem';
 import { Resume } from './types';
 import { useResumeStore } from '@/app/store/resumeStore';
@@ -19,6 +20,7 @@ const ResumeList: React.FC<ResumeListProps> = ({
 }) => {
   const { user } = useAuth();
   const { resumes, selectedResumeId, selectResume, setResumes, setLoading } = useResumeStore();
+  const [searchQuery, setSearchQuery] = useState('');
 
   // Set up Firebase listener for resumes
   useEffect(() => {
@@ -65,6 +67,17 @@ const ResumeList: React.FC<ResumeListProps> = ({
   const handleSelectResume = (id: string) => {
     selectResume(id);
   };
+
+  // Filter resumes based on search query
+  const filteredResumes = resumes.filter(resume =>
+    resume.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  // Handle search input change
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+  };
+
   return (
     <div className="w-full md:w-[350px] h-full border-r border-white/10 flex flex-col">
       {/* Header with title and Create New Resume button */}
@@ -82,20 +95,47 @@ const ResumeList: React.FC<ResumeListProps> = ({
           <span className="font-medium">Create New Resume</span>
         </Button>
 
+        {/* Search input */}
+        <div className="relative mt-4 mb-4">
+          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+            <SearchIcon className="h-4 w-4 text-white/50" />
+          </div>
+          <Input
+            type="text"
+            placeholder="Search resumes..."
+            value={searchQuery}
+            onChange={handleSearchChange}
+            className="w-full pl-10 bg-zinc-900/50 border-white/40 hover:border-white/80 focus:ring-0 text-white placeholder:text-white/50 hover:outline-none focus:outline-none outline-none"
+          />
+        </div>
+
         <Separator className="bg-white/10" />
       </div>
 
       {/* Resume list */}
-      <div className="p-4 flex flex-col flex-1 overflow-y-auto">
+      <div className="p-4 pt-0 flex flex-col flex-1 overflow-y-auto">
         {resumes.length > 0 ? (
-          resumes.map((resume) => (
-            <ResumeItem
-              key={resume.firebaseId || resume.id}
-              resume={resume}
-              isSelected={selectedResumeId === resume.id}
-              onSelect={handleSelectResume}
-            />
-          ))
+          filteredResumes.length > 0 ? (
+            filteredResumes.map((resume) => (
+              <ResumeItem
+                key={resume.firebaseId || resume.id}
+                resume={resume}
+                isSelected={selectedResumeId === resume.id}
+                onSelect={handleSelectResume}
+              />
+            ))
+          ) : (
+            <div className="flex flex-col items-center justify-center h-full text-center p-4">
+              <p className="text-white/60 mb-4">No resumes match your search</p>
+              <Button
+                onClick={() => setSearchQuery('')}
+                variant="outline"
+                className="border-white/20 text-white hover:bg-white/10"
+              >
+                Clear Search
+              </Button>
+            </div>
+          )
         ) : (
           <div className="flex flex-col items-center justify-center h-full text-center p-4">
             <p className="text-white/60 mb-4">You don't have any resumes yet</p>
