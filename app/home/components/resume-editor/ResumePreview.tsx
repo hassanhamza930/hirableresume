@@ -92,7 +92,6 @@ const ResumePreview: React.FC<ResumePreviewProps> = ({
                 <div style={{
                   transform: `scale(${scale})`,
                   transformOrigin: 'top center',
-                  marginBottom: `${50 * scale}px`
                 }}>
                   {/* Fixed width A4 container */}
                   <div
