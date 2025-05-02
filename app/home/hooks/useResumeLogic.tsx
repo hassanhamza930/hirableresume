@@ -342,7 +342,7 @@ export default function useResumeLogic({ userId }: UseResumeLogicProps = {}) {
           'X-Title': 'HirableResume'
         },
         body: JSON.stringify({
-          model: 'openai/gpt-4.1',
+          model: 'google/gemini-2.5-flash-preview',
           messages: [
             {
               role: 'system',
