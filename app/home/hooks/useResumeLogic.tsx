@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react'; // Added useEffect, useCallback
 import { useUserStore } from '@/app/store/userStore';
 import { useResumeStore } from '@/app/store/resumeStore';
 import { useAuth } from '@/app/hooks/useAuth';
@@ -20,12 +20,48 @@ export default function useResumeLogic({ userId }: UseResumeLogicProps = {}) {
   const [isLoading, setIsLoading] = useState(false);
   const { userData } = useUserStore();
   const { user } = useAuth();
-  const { selectResume } = useResumeStore();
+  const { selectResume, updateResumeContent: updateStoreResumeContent, setUpdateFirebaseCallback } = useResumeStore(); // Get store actions
   const router = useRouter();
 
   // Get the actual user ID (from props or from auth)
   const actualUserId = userId || user?.uid;
 
+  // --- Firebase Persistence Logic ---
+  
+  const persistResumeContent = useCallback(async (resumeId: string, content: string) => {
+    console.log(`Persisting content for resume ${resumeId} to Firebase...`);
+    const db = getFirestore();
+    const resumesCollection = collection(db, 'resumes');
+    const resumeQuery = query(resumesCollection, where('id', '==', resumeId), limit(1));
+  
+    try {
+      const querySnapshot = await getDocs(resumeQuery);
+      if (querySnapshot.empty) {
+        throw new Error(`Resume document with id ${resumeId} not found in Firebase for persistence.`);
+      }
+      const resumeDocRef = querySnapshot.docs[0].ref;
+      await updateDoc(resumeDocRef, {
+        content: content,
+        updatedAt: serverTimestamp()
+      });
+      console.log(`Successfully persisted content for resume ${resumeId}`);
+    } catch (error) {
+      console.error(`Error persisting content for resume ${resumeId}:`, error);
+      toast.error('Failed to save changes. Please try again.');
+      // Re-throw the error if you want calling functions (like undo/redo) to handle it
+      throw error;
+    }
+  }, []); // Empty dependency array as it uses functions/vars defined outside or stable ones like getFirestore
+  
+  // --- Effect to set the Firebase update callback in the store ---
+  useEffect(() => {
+    setUpdateFirebaseCallback(persistResumeContent);
+    // Cleanup function if needed, though likely not necessary here
+    // return () => setUpdateFirebaseCallback(undefined);
+  }, [persistResumeContent, setUpdateFirebaseCallback]);
+  
+  // --- Resume Creation/Update Logic ---
+  
   /**
    * Creates a new resume based on the job description
    * @param jobDescription The job description to tailor the resume for
@@ -255,26 +291,24 @@ export default function useResumeLogic({ userId }: UseResumeLogicProps = {}) {
         }
       }
 
-      // Update the resume in Firebase
-      const db = getFirestore();
-      const resumesCollection = collection(db, 'resumes');
+      // 1. Update the state and history in the Zustand store FIRST
+      updateStoreResumeContent(resumeId, updatedContent);
+      
+      // 2. Persist the new content to Firebase
+      await persistResumeContent(resumeId, updatedContent);
+      
+      // Old Firebase update logic removed (was lines 259-275)
+      // const db = getFirestore();
+      // const resumesCollection = collection(db, 'resumes');
 
-      // We need to query for the document ID since we're storing our own ID in the document
-      const resumeQuery = query(resumesCollection, where('id', '==', resumeId), limit(1));
-      const querySnapshot = await getDocs(resumeQuery);
+      // Querying and updating logic is now inside persistResumeContent
+      // const resumeQuery = query(resumesCollection, where('id', '==', resumeId), limit(1));
+      // const querySnapshot = await getDocs(resumeQuery);
+      // ... (rest of old update logic) ...
 
-      if (querySnapshot.empty) {
-        throw new Error('Resume document not found in Firebase');
-      }
-
-      const resumeDocRef = querySnapshot.docs[0].ref;
-
-      await updateDoc(resumeDocRef, {
-        content: updatedContent,
-        updatedAt: serverTimestamp()
-      });
-
-      // The onSnapshot listener will automatically update the store
+      // The onSnapshot listener should still pick up changes, but the store state
+      // is already updated by updateStoreResumeContent. The listener will essentially
+      // confirm the Firebase state matches the store state after persistence.
 
       // Show success message after loading is complete
       setTimeout(() => {

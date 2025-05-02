@@ -2,9 +2,10 @@
 
 import React, { useRef, useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { FileType, CopyIcon } from 'lucide-react';
+import { FileType, CopyIcon, Undo, Redo } from 'lucide-react'; // Added Undo, Redo
 import SpotlightCard from '@/components/SpotLightCard';
 import { Resume } from './types';
+import { useResumeStore } from '@/app/store/resumeStore'; // Added store import
 import LoadingOverlay from './LoadingOverlay';
 
 interface ResumePreviewProps {
@@ -28,6 +29,14 @@ const ResumePreview: React.FC<ResumePreviewProps> = ({
   const desktopContainerRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(0.5); // Default scale for mobile
   const [desktopScale, setDesktopScale] = useState(1); // Default scale for desktop
+
+  // Get undo/redo functions and state from the store
+  // Select actions (stable references)
+  const undoContentChange = useResumeStore(state => state.undoContentChange);
+  const redoContentChange = useResumeStore(state => state.redoContentChange);
+  // Select state values that determine button disabled status
+  const isUndoPossible = useResumeStore(state => state.canUndo());
+  const isRedoPossible = useResumeStore(state => state.canRedo());
 
   // Function to calculate and update scale based on container width
   const updateScale = () => {
@@ -68,7 +77,37 @@ const ResumePreview: React.FC<ResumePreviewProps> = ({
         <h2 className="text-white text-md font-medium truncate max-w-[200px] md:max-w-none" style={{ fontFamily: "Geist" }}>
           {resume.name}
         </h2>
-        <div className="flex gap-2">
+        <div className="flex gap-2 items-center"> {/* Added items-center */}
+          {/* Undo Button */}
+          <Button
+            onClick={undoContentChange}
+            disabled={!isUndoPossible} // Use the selected state value
+            size="sm"
+            variant="outline"
+            className="flex items-center gap-1 border-white/20 bg-zinc-900/80 text-white hover:bg-zinc-800 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+            aria-label="Undo change"
+          >
+            <Undo className="h-4 w-4" />
+            <span className="hidden sm:inline">Undo</span>
+          </Button>
+
+          {/* Redo Button */}
+          <Button
+            onClick={redoContentChange}
+            disabled={!isRedoPossible} // Use the selected state value
+            size="sm"
+            variant="outline"
+            className="flex items-center gap-1 border-white/20 bg-zinc-900/80 text-white hover:bg-zinc-800 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+            aria-label="Redo change"
+          >
+            <Redo className="h-4 w-4" />
+            <span className="hidden sm:inline">Redo</span>
+          </Button>
+
+          {/* Separator (Optional) */}
+          <div className="h-6 w-px bg-white/20 mx-1"></div>
+
+          {/* Existing Buttons */}
           {!isMobile && (
             <Button
               onClick={() => {
