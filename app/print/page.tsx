@@ -121,7 +121,7 @@ function PrintPageContent() {
   return (
     <div className="print-container">
       <div
-        className="resume-content"
+        className="resume-content px-5"
         dangerouslySetInnerHTML={{ __html: resumeContent }}
       />
       <div className="no-print text-center mt-8 mb-4">
