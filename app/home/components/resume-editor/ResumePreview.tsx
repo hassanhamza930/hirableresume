@@ -25,15 +25,33 @@ const ResumePreview: React.FC<ResumePreviewProps> = ({
   isMobile = false
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [scale, setScale] = useState(0.5); // Default scale
+  const desktopContainerRef = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(0.5); // Default scale for mobile
+  const [desktopScale, setDesktopScale] = useState(1); // Default scale for desktop
 
   // Function to calculate and update scale based on container width
   const updateScale = () => {
+    // Mobile scaling
     if (containerRef.current && isMobile) {
       const containerWidth = containerRef.current.clientWidth;
       // A4 width is 595px, calculate scale to fit container width with some padding
       const newScale = (containerWidth - 20) / 595; // 10px padding on each side
       setScale(newScale);
+    }
+
+    // Desktop scaling
+    if (desktopContainerRef.current && !isMobile) {
+      const containerWidth = desktopContainerRef.current.clientWidth;
+
+      // A4 width is 595px
+      const a4Width = 595;
+
+      // Calculate scale to fit container width with some padding
+      const widthScale = (containerWidth - 80) / a4Width; // 40px padding on each side
+
+      // Use a scale that fits the width but cap at 1 to prevent too large scaling
+      const newScale = Math.min(widthScale, 1);
+      setDesktopScale(newScale);
     }
   };
 
@@ -111,10 +129,34 @@ const ResumePreview: React.FC<ResumePreviewProps> = ({
               </div>
             </div>
           ) : (
-            <div
-              className="bg-white text-zinc-950 p-10 h-full overflow-y-auto"
-              dangerouslySetInnerHTML={{ __html: resume.content }}
-            />
+            <div className="bg-black h-full w-full overflow-auto" ref={desktopContainerRef}>
+              {/* Outer container for scrolling - desktop version */}
+              <div className="w-full flex flex-row justify-center items-start">
+                {/* This is a wrapper to handle the scaling */}
+                <div style={{
+                  transform: `scale(${desktopScale})`,
+                  transformOrigin: 'top center',
+                  width:"100%"
+                }}
+                className='flex flex-row justfiy-center items-center'
+                >
+                  {/* Fixed width A4 container */}
+                  <div
+                    className="bg-zinc-950 text-zinc-950 shadow-xl w-full flex flex-row justify-center items-center"
+                    style={{
+                      // This is a standard A4 width and height
+                      // minHeight: '842px',
+                    }}
+                  >
+                    {/* The actual resume content */}
+                    <div
+                      className="resume-content  max-w-[900px] bg-white  py-6 px-6"
+                      dangerouslySetInnerHTML={{ __html: resume.content }}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
           )}
         </SpotlightCard>
 
