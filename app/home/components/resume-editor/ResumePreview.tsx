@@ -2,7 +2,7 @@
 
 import React, { useRef, useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { FileType, CopyIcon, Undo, Redo } from 'lucide-react'; // Added Undo, Redo
+import { Download, CopyIcon, Undo, Redo } from 'lucide-react'; // Added Undo, Redo
 import SpotlightCard from '@/components/SpotLightCard';
 import { Resume } from './types';
 import { useResumeStore } from '@/app/store/resumeStore'; // Added store import
@@ -129,7 +129,7 @@ const ResumePreview: React.FC<ResumePreviewProps> = ({
             variant="outline"
             className="flex items-center gap-1 border-white/20 bg-zinc-900/80 text-white hover:bg-zinc-800 hover:text-white transition-all duration-200"
           >
-            <FileType className="h-4 w-4" />
+            <Download className="h-4 w-4" />
             <span className={isMobile ? "hidden sm:inline" : ""}>Download PDF</span>
           </Button>
         </div>
