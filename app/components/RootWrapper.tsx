@@ -3,17 +3,7 @@
 import React, { ReactNode, useEffect } from 'react';
 import { initializeApp, getApps, FirebaseApp } from 'firebase/app';
 import { Toaster } from 'sonner';
-
-const firebaseConfig = {
-  apiKey: "AIzaSyDvcBIKyIsOY2mEptI1NNjoTqCVFRseXO4",
-  authDomain: "chatapp-dda45.firebaseapp.com",
-  databaseURL: "https://chatapp-dda45.firebaseio.com",
-  projectId: "chatapp-dda45",
-  storageBucket: "chatapp-dda45.firebasestorage.app",
-  messagingSenderId: "912752217974",
-  appId: "1:912752217974:web:33385b2084d62e7bf77457",
-  measurementId: "G-3ZNFS8EW3H"
-};
+import { firebaseConfig } from '../config/firebase';
 
 // Initialize Firebase outside of the component
 let firebaseApp: FirebaseApp | undefined;

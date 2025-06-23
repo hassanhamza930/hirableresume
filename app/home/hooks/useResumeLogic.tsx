@@ -156,8 +156,8 @@ export default function useResumeLogic({ userId }: UseResumeLogicProps = {}) {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer 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`,
-          'HTTP-Referer': 'https://hirableresume.com',
+          'Authorization': `Bearer ${process.env.NEXT_PUBLIC_OPENROUTER_API_KEY}`,
+          'HTTP-Referer': process.env.NEXT_PUBLIC_BASE_URL || 'https://hirableresume.com',
           'X-Title': 'HirableResume'
         },
         body: JSON.stringify({
@@ -208,8 +208,8 @@ export default function useResumeLogic({ userId }: UseResumeLogicProps = {}) {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer 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`,
-          'HTTP-Referer': 'https://hirableresume.com',
+          'Authorization': `Bearer ${process.env.NEXT_PUBLIC_OPENROUTER_API_KEY}`,
+          'HTTP-Referer': process.env.NEXT_PUBLIC_BASE_URL || 'https://hirableresume.com',
           'X-Title': 'HirableResume'
         },
         body: JSON.stringify({
@@ -337,8 +337,8 @@ export default function useResumeLogic({ userId }: UseResumeLogicProps = {}) {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer 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`,
-          'HTTP-Referer': 'https://hirableresume.com',
+          'Authorization': `Bearer ${process.env.NEXT_PUBLIC_OPENROUTER_API_KEY}`,
+          'HTTP-Referer': process.env.NEXT_PUBLIC_BASE_URL || 'https://hirableresume.com',
           'X-Title': 'HirableResume'
         },
         body: JSON.stringify({

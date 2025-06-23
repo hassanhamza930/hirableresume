@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 
 export async function GET() {
   // Base URL of your website
-  const baseUrl = 'https://hirableresume.com';
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://hirableresume.com';
 
   // Current date in ISO format for lastmod
   const date = new Date().toISOString().split('T')[0];
