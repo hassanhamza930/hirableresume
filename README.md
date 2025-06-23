@@ -2,7 +2,7 @@
 
 > **Next-generation resume builder** that creates hyper-personalized resumes for each job description using advanced AI and innovative diff-based content updates.
 
-![image.png](attachment:949f17c1-e772-4865-9bab-9273c3a4f68f:image.png)
+![image](https://github.com/user-attachments/assets/4a6082cf-d0d7-4918-940f-c98fd384e098)
 ![image](https://github.com/user-attachments/assets/6f8d519b-1dfe-4af7-9dc5-55598435954a)
 ![image](https://github.com/user-attachments/assets/f77e9fc5-5586-4623-a9c8-e3fdb9cb3aa8)
 
