@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Download, CopyIcon, Undo, Redo } from 'lucide-react'; // Added Undo, Redo
 import SpotlightCard from '@/components/SpotLightCard';
@@ -15,6 +15,8 @@ interface ResumePreviewProps {
   isLoading?: boolean;
   loadingMessage?: string;
   isMobile?: boolean;
+  onElementSelect: (elementHtml: string) => void;
+  selectedElements: string[];
 }
 
 const ResumePreview: React.FC<ResumePreviewProps> = ({
@@ -23,7 +25,9 @@ const ResumePreview: React.FC<ResumePreviewProps> = ({
   onDownload,
   isLoading = false,
   loadingMessage,
-  isMobile = false
+  isMobile = false,
+  onElementSelect,
+  selectedElements,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const desktopContainerRef = useRef<HTMLDivElement>(null);
@@ -70,7 +74,118 @@ const ResumePreview: React.FC<ResumePreviewProps> = ({
     window.addEventListener('resize', updateScale);
     return () => window.removeEventListener('resize', updateScale);
   }, [isMobile]);
+
+  useEffect(() => {
+    const contentContainer = isMobile ? containerRef.current : desktopContainerRef.current;
+    if (!contentContainer) return;
+
+    const selectableSelector = 'p, li, h1, h2, h3, h4, h5, h6, div:not(:has(p, li, h1, h2, h3, h4, h5, h6, div))';
+
+    // Helper to get the canonical HTML for an element, stripped of our dynamic classes
+    const getCleanHtml = (el: HTMLElement) => {
+        // Create a new element of the same type
+        const tempEl = document.createElement(el.tagName);
+        
+        // Copy only the essential attributes and content
+        tempEl.innerHTML = el.innerHTML;
+        
+        // Copy id if it exists
+        if (el.id) tempEl.id = el.id;
+        
+        // Copy only original classes (not our dynamic ones)
+        const dynamicClasses = ['bg-blue-500/20', 'bg-blue-500/50', 'rounded-sm'];
+        el.classList.forEach(cls => {
+            if (!dynamicClasses.includes(cls)) {
+                tempEl.classList.add(cls);
+            }
+        });
+        
+        return tempEl.outerHTML;
+    };
+
+    // Debug: Log selected elements array for debugging
+    console.log('Current selectedElements:', selectedElements);
+    
+    // 1. Update visual state of all elements based on selection
+    const allSelectableElements = Array.from(contentContainer.querySelectorAll(selectableSelector)) as HTMLElement[];
+    
+    // First, remove all selection highlights to start fresh
+    allSelectableElements.forEach(el => {
+        el.classList.remove('bg-blue-500/50');
+    });
+    
+    // Then apply highlights to selected elements
+    allSelectableElements.forEach(el => {
+        if (el.innerText.trim() === '') return;
+        
+        const cleanHtml = getCleanHtml(el);
+        const isSelected = selectedElements.includes(cleanHtml);
+        
+        if (isSelected) {
+            console.log('Highlighting element:', cleanHtml.substring(0, 50) + '...');
+            el.classList.add('bg-blue-500/50');
+            el.classList.remove('bg-blue-500/20', 'rounded-sm'); // Ensure hover style is removed
+        }
+    });
+
+    // 2. Set up event delegation for hover and click
+    const getSelectableTarget = (target: EventTarget | null): HTMLElement | null => {
+        if (!(target instanceof HTMLElement)) return null;
+        const el = target.closest(selectableSelector);
+        const resumeContentDiv = contentContainer.querySelector('.resume-content');
+        if (el instanceof HTMLElement && resumeContentDiv?.contains(el) && el.innerText.trim() !== '') {
+            return el;
+        }
+        return null;
+    };
+
+    const handleMouseOver = (e: MouseEvent) => {
+        const el = getSelectableTarget(e.target);
+        if (el && !el.classList.contains('bg-blue-500/50')) { // Don't apply hover if selected
+            el.classList.add('bg-blue-500/20', 'rounded-sm');
+            el.style.cursor = 'pointer';
+        }
+    };
+
+    const handleMouseOut = (e: MouseEvent) => {
+        const el = getSelectableTarget(e.target);
+        if (el) {
+            el.classList.remove('bg-blue-500/20', 'rounded-sm');
+            el.style.cursor = '';
+        }
+    };
+
+    const handleClick = (e: MouseEvent) => {
+        const el = getSelectableTarget(e.target);
+        if (el) {
+            e.preventDefault();
+            e.stopPropagation();
+            const cleanHtml = getCleanHtml(el);
+            console.log('Selected element HTML:', cleanHtml); // Debug log
+            onElementSelect(cleanHtml);
+        }
+    };
+
+    contentContainer.addEventListener('mouseover', handleMouseOver);
+    contentContainer.addEventListener('mouseout', handleMouseOut);
+    contentContainer.addEventListener('click', handleClick);
+
+    // Cleanup function
+    return () => {
+        contentContainer.removeEventListener('mouseover', handleMouseOver);
+        contentContainer.removeEventListener('mouseout', handleMouseOut);
+        contentContainer.removeEventListener('click', handleClick);
+    };
+
+}, [resume.content, selectedElements, onElementSelect, isMobile]);
+
   return (
+    <>
+      <style jsx global>{`
+        [data-selected='true'], [data-selected='true'] * {
+          color: white !important;
+        }
+      `}</style>
     <div className="flex-1 flex flex-col p-6 pt-2 overflow-hidden">
       {/* Header with title and buttons */}
       <div className="flex items-center justify-between mb-4">
@@ -162,6 +277,7 @@ const ResumePreview: React.FC<ResumePreviewProps> = ({
                     <div
                       className="resume-content"
                       dangerouslySetInnerHTML={{ __html: resume.content }}
+                      
                     />
                   </div>
                 </div>
@@ -191,6 +307,7 @@ const ResumePreview: React.FC<ResumePreviewProps> = ({
                     <div
                       className="resume-content  max-w-[900px] bg-white  py-6 px-6"
                       dangerouslySetInnerHTML={{ __html: resume.content }}
+                      
                     />
                   </div>
                 </div>
@@ -203,6 +320,7 @@ const ResumePreview: React.FC<ResumePreviewProps> = ({
         <LoadingOverlay isVisible={isLoading} message={loadingMessage} />
       </div>
     </div>
+    </>
   );
 };
 

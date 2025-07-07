@@ -2,15 +2,24 @@
 
 import React, { useState, KeyboardEvent } from 'react';
 import { Button } from '@/components/ui/button';
-import { Loader2, Send } from 'lucide-react';
+import { Loader2, Send, X } from 'lucide-react';
 
 interface ResumeEditorProps {
   onUpdateResume: (content: string) => void;
   isLoading?: boolean;
+  selectedElements: string[];
+  onClearSelection: () => void;
 }
 
-const ResumeEditor: React.FC<ResumeEditorProps> = ({ onUpdateResume, isLoading = false }) => {
+const ResumeEditor: React.FC<ResumeEditorProps> = ({
+  onUpdateResume,
+  isLoading = false,
+  selectedElements = [],
+  onClearSelection
+}) => {
   const [editContent, setEditContent] = useState<string>('');
+
+
 
   const handleSubmit = () => {
     if (editContent.trim()) {
@@ -34,6 +43,19 @@ const ResumeEditor: React.FC<ResumeEditorProps> = ({ onUpdateResume, isLoading =
 
   return (
     <div className="p-4 sm:p-6 py-3 sm:py-4 border-t border-white/10 bg-zinc-950/90 backdrop-blur-xl">
+      {selectedElements.length > 0 && (
+        <div className="mb-3">
+          <div className="flex flex-col gap-1 bg-blue-600/10 border border-blue-500/30 rounded-lg p-2 text-xs text-blue-300 w-full">
+            <div className="flex justify-between items-center">
+                <span className="font-semibold">{selectedElements.length} element{selectedElements.length !== 1 ? 's' : ''} selected</span>
+                <button onClick={onClearSelection} className="ml-2 text-blue-300/70 hover:text-blue-300">
+                  <X className="h-4 w-4" />
+                </button>
+            </div>
+            <p className="font-mono text-white/70 max-h-24 overflow-y-auto" dangerouslySetInnerHTML={{ __html: `Preview: ${selectedElements[0]}` }} />
+          </div>
+        </div>
+      )}
       <h3 className="text-white text-sm font-medium mb-2 hidden sm:block" style={{ fontFamily: "Geist" }}>
         Customize Your Resume
       </h3>

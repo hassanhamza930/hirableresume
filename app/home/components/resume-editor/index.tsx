@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import ResumeList from './ResumeList';
 import ResumePreview from './ResumePreview';
@@ -11,7 +11,7 @@ import useResumeLogic from '../../hooks/useResumeLogic';
 import { useResumeStore } from '@/app/store/resumeStore';
 import LoadingOverlay from './LoadingOverlay';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence, motion } from 'framer-motion';
 
 interface ResumeEditorComponentProps {
   showMobileResumeList: boolean;
@@ -22,6 +22,7 @@ const ResumeEditorComponent: React.FC<ResumeEditorComponentProps> = ({
   showMobileResumeList,
   setShowMobileResumeList
 }) => {
+  const [selectedElements, setSelectedElements] = useState<string[]>([]);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isCreatingNewResume, setIsCreatingNewResume] = useState(false);
   const [showMobileResume, setShowMobileResume] = useState(false);
@@ -96,8 +97,6 @@ const ResumeEditorComponent: React.FC<ResumeEditorComponentProps> = ({
         // First navigate to the print route with just the resume ID
         router.push(`/print?id=${selectedResumeId}`);
 
-
-
       } catch (error) {
         console.error('Error preparing PDF download:', error);
         toast.error('Failed to prepare PDF download');
@@ -110,15 +109,47 @@ const ResumeEditorComponent: React.FC<ResumeEditorComponentProps> = ({
   // Handle updating resume content
   const handleUpdateResume = async (userRequest: string) => {
     if (selectedResumeId) {
-      const success = await updateResume(selectedResumeId, userRequest);
+      let finalRequest = userRequest;
+      if (selectedElements.length > 0) {
+        const selectionContext = selectedElements.join('\n\n');
+        finalRequest = `Selected Sections:\n\"${selectionContext}\"\n\nUser Request:\n${userRequest}`;
+      }
+      const success = await updateResume(selectedResumeId, finalRequest);
 
-      if (!success) {
+      if (success) {
+        setSelectedElements([]);
+      } else {
         toast.error('Failed to update resume');
       }
     } else {
       toast.error('No resume selected');
     }
   };
+
+  const handleElementSelect = useCallback((elementHtml: string) => {
+    console.log('Parent received element selection:', elementHtml.substring(0, 50) + '...');
+    
+    setSelectedElements(prev => {
+      // Check if this element is already selected
+      const isAlreadySelected = prev.some(item => {
+        const isMatch = item === elementHtml;
+        if (isMatch) console.log('Found matching element in selection array');
+        return isMatch;
+      });
+      
+      if (isAlreadySelected) {
+        console.log('Removing element from selection');
+        return prev.filter(item => item !== elementHtml);
+      } else {
+        console.log('Adding element to selection');
+        return [...prev, elementHtml];
+      }
+    });
+  }, []);
+
+  const handleClearSelection = useCallback(() => {
+    setSelectedElements([]);
+  }, []);
 
   return (
     <>
@@ -161,12 +192,16 @@ const ResumeEditorComponent: React.FC<ResumeEditorComponentProps> = ({
                     isLoading={isLoading}
                     loadingMessage={'Adding magic to your resume...'}
                     isMobile={true}
+                    onElementSelect={handleElementSelect}
+                    selectedElements={selectedElements}
                   />
 
                   {/* Resume Editor */}
                   <ResumeEditor
                     onUpdateResume={handleUpdateResume}
                     isLoading={isLoading}
+                    selectedElements={selectedElements}
+                    onClearSelection={handleClearSelection}
                   />
                 </div>
               </motion.div>
@@ -191,12 +226,16 @@ const ResumeEditorComponent: React.FC<ResumeEditorComponentProps> = ({
                     onDownload={handleDownload}
                     isLoading={isLoading}
                     loadingMessage={'Adding magic to your resume...'}
+                    onElementSelect={handleElementSelect}
+                    selectedElements={selectedElements}
                   />
 
                   {/* Resume Editor */}
                   <ResumeEditor
                     onUpdateResume={handleUpdateResume}
                     isLoading={isLoading}
+                    selectedElements={selectedElements}
+                    onClearSelection={handleClearSelection}
                   />
                 </>
               ) : isCreatingNewResume ? (
