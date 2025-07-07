@@ -182,6 +182,20 @@ const ResumePreview: React.FC<ResumePreviewProps> = ({
   return (
     <>
       <style jsx global>{`
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: rgba(255, 255, 255, 0.05);
+          border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: rgba(59, 130, 246, 0.5);
+          border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: rgba(59, 130, 246, 0.7);
+        }
         [data-selected='true'], [data-selected='true'] * {
           color: white !important;
         }
@@ -251,13 +265,13 @@ const ResumePreview: React.FC<ResumePreviewProps> = ({
       </div>
 
       {/* Scrollable resume content container */}
-      <div className="flex-1 min-h-0 overflow-hidden relative rounded-2xl">
+      <div className="flex-1 min-h-0 overflow-hidden relative rounded-none">
         <SpotlightCard
           className="w-full h-full border border-white/10 bg-white backdrop-blur-xl"
           spotlightColor="rgba(255, 255, 255, 0.05)"
         >
           {isMobile ? (
-            <div className="bg-white h-full w-full overflow-auto" ref={containerRef}>
+            <div className="bg-white h-full w-full overflow-auto custom-scrollbar" ref={containerRef}>
               {/* Outer container for scrolling */}
               <div className="w-full py-4 flex h-full justify-center">
                 {/* This is a wrapper to handle the scaling */}
@@ -284,7 +298,7 @@ const ResumePreview: React.FC<ResumePreviewProps> = ({
               </div>
             </div>
           ) : (
-            <div className="bg-black h-full w-full overflow-auto" ref={desktopContainerRef}>
+            <div className="bg-black h-full w-full overflow-auto custom-scrollbar" ref={desktopContainerRef}>
               {/* Outer container for scrolling - desktop version */}
               <div className="w-full flex flex-row justify-center items-start">
                 {/* This is a wrapper to handle the scaling */}

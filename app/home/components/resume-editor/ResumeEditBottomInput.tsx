@@ -83,7 +83,7 @@ const ResumeEditor: React.FC<ResumeEditorProps> = ({
                   <X className="h-4 w-4" />
                 </button>
             </div>
-            <div className="font-mono text-white/70 max-h-24 overflow-y-auto custom-scrollbar">
+            <div className="font-mono text-white/70 max-h-12 overflow-y-auto custom-scrollbar">
               <p className="mb-1">Selected content:</p>
               {selectedTexts.map((text, index) => (
                 <div key={index} className="pl-2 border-l-2 border-blue-500/30 mb-1">
